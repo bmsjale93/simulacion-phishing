@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'assets/database/db.php';
+include 'assets/database/config.php';
 
 if (!isset($_SESSION['userID'])) {
   header ("index.php");

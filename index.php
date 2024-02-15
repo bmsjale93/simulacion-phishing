@@ -9,7 +9,7 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Portal de Búsqueda de Empleo</title>
+    <title>4Phish - Preveen a tus empleados de Phishing</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -41,7 +41,7 @@ session_start();
         <div class="container d-flex justify-content-between">
             <div class="contact-info d-flex align-items-center">
                 <i class="fa fa-envelope d-flex align-items-center">
-                    <a href="mailto:contacto@worknow.com">contacto@worknow.com</a>
+                    <a href="mailto:contacto@4phish.com">contacto@4phish.com</a>
                 </i>
                 <i class="fa fa-phone d-flex align-items-center ms-4">
                     <span>+34 612 612 612</span>
@@ -62,12 +62,12 @@ session_start();
     <header id="header" class="d-flex align-items-center">
         <div class="container d-flex justify-content-between">
             <div id="logo">
-                <h1><a href="index.php">Work<span>Now</span></a></h1>
+                <h1><a href="index.php">4<span>Phish</span></a></h1>
             </div>
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                    <li><a class="nav-link" href="ofertas_trabajo.php">Ofertas de Trabajo</a></li>
+                    <li><a class="nav-link" href="ofertas_trabajo.php">Ejemplos de Simulaciones</a></li>
                     <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                     <?php if (isset($_SESSION['userID'])) : ?>
                         <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -85,7 +85,7 @@ session_start();
                 <nav id="navbar-mobile" class="navbar-mobile">
                     <ul>
                         <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                        <li><a class="nav-link" href="ofertas_trabajo.php">Ofertas de Trabajo</a></li>
+                        <li><a class="nav-link" href="ofertas_trabajo.php">Ejemplos de Simulaciones</a></li>
                         <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                         <?php if (isset($_SESSION['userID'])) : ?>
                             <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -107,9 +107,9 @@ session_start();
     <section id="hero">
 
         <div class="hero-content">
-            <h2>Bienvenidos a<br>Work <span>Now</span></h2>
+            <h2>Bienvenidos a<br>4 <span>Phish</span></h2>
             <div>
-                <a href="ofertas_trabajo.php" class="btn-get-started">Ofertas de Trabajo</a>
+                <a href="ofertas_trabajo.php" class="btn-get-started">Ejemplos de Simulaciones</a>
                 <a href="contacto.php" class="btn-projects">Contáctanos Ahora</a>
             </div>
         </div>
