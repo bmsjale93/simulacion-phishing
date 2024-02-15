@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root"; // Cambia esto por tu nombre de usuario de MySQL
-$password = ""; // Cambia esto por tu contraseña de MySQL si la tienes
+$username = "root";
+$password = "root";
 $dbname = "phishing_simulator";
 
 // Crear conexión

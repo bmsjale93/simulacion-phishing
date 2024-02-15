@@ -12,6 +12,13 @@ CREATE TABLE Usuarios (
     FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE PlantillasCorreo (
+    IDPlantilla INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Asunto VARCHAR(255) NOT NULL,
+    Cuerpo TEXT NOT NULL
+);
+
 CREATE TABLE Campañas (
     IDCampaña INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDUsuario INT(6) UNSIGNED,
@@ -19,9 +26,17 @@ CREATE TABLE Campañas (
     Nombre VARCHAR(100) NOT NULL,
     Descripción TEXT,
     FechaInicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FechaFin TIMESTAMP,
+    FechaFin TIMESTAMP NULL,
     FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID),
     FOREIGN KEY (IDPlantilla) REFERENCES PlantillasCorreo(IDPlantilla)
+);
+
+CREATE TABLE Envíos (
+    IDEnvío INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    IDCampaña INT(6) UNSIGNED,
+    FechaEnvío TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    TipoEnvío ENUM('único', 'masivo') NOT NULL,
+    FOREIGN KEY (IDCampaña) REFERENCES Campañas(IDCampaña)
 );
 
 CREATE TABLE Clicks (
@@ -40,19 +55,4 @@ CREATE TABLE DetallesEnvíos (
     EmailDestinatario VARCHAR(50) NOT NULL,
     Estado ENUM('entregado', 'fallido') NOT NULL,
     FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío)
-);
-
-CREATE TABLE Envíos (
-    IDEnvío INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    IDCampaña INT(6) UNSIGNED,
-    FechaEnvío TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    TipoEnvío ENUM('único', 'masivo') NOT NULL,
-    FOREIGN KEY (IDCampaña) REFERENCES Campañas(IDCampaña)
-);
-
-CREATE TABLE PlantillasCorreo (
-    IDPlantilla INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Asunto VARCHAR(255) NOT NULL,
-    Cuerpo TEXT NOT NULL
 );

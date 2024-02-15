@@ -5,7 +5,7 @@ CREATE TABLE Campañas (
     Nombre VARCHAR(100) NOT NULL,
     Descripción TEXT,
     FechaInicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FechaFin TIMESTAMP,
+    FechaFin TIMESTAMP NULL,
     FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID),
     FOREIGN KEY (IDPlantilla) REFERENCES PlantillasCorreo(IDPlantilla)
 );

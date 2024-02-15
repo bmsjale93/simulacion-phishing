@@ -36,7 +36,7 @@ function submitLoginForm() {
   if (email && password) {
     $.ajax({
       type: "POST",
-      url: "/portal_empleo/assets/database/login_user.php",
+      url: "/simulacion-phishing/assets/database/login_user.php",
       data: { email: email, password: password },
       dataType: "json",
       success: function (data) {
@@ -65,7 +65,7 @@ function initializeRegistrationForm() {
 
     $.ajax({
       type: "POST",
-      url: "/portal_empleo/assets/database/register_user.php",
+      url: "/simulacion-phishing/assets/database/register_user.php",
       data: formData,
       dataType: "json",
       success: function (response) {
@@ -256,9 +256,4 @@ function goToStep(step) {
 function updateProgressBar(step) {
   const percentage = step === 1 ? 33 : step === 2 ? 66 : 100;
   $("#progressBar").css("width", percentage + "%").attr("aria-valuenow", percentage).text(`Paso ${step} de 3`);
-}
-
-// Asignar manejadores de eventos adicionales si es necesario
-function assignEventHandlers() {
-  // Esta función se mantendría para futuras expansiones o para manejar eventos globales adicionales.
 }
