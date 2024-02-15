@@ -135,7 +135,7 @@ function enviarCorreoPersonalizado($emailDestinatario, $nombreDestinatario, $asu
     try {
         // Configuración del servidor SMTP
         $mail->isSMTP();
-        $mail->Host = 'smtp.ejemplo.com'; // Especifica tu servidor SMTP
+        $mail->Host = 'smtp.ejemplo.com'; // Servidor SMTP
         $mail->SMTPAuth = true;
         $mail->Username = 'tu@correo.com'; // SMTP username
         $mail->Password = 'tuContraseña'; // SMTP password
@@ -144,7 +144,7 @@ function enviarCorreoPersonalizado($emailDestinatario, $nombreDestinatario, $asu
 
         // Configura los remitentes y destinatarios
         $mail->setFrom('de@ejemplo.com', 'Nombre Remitente');
-        $mail->addAddress($emailDestinatario, $nombreDestinatario); // Añade un destinatario
+        $mail->addAddress($emailDestinatario, $nombreDestinatario);
 
         // Configura el contenido del correo
         $mail->isHTML(true); // Establece el formato de correo como HTML

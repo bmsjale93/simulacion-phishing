@@ -2,6 +2,8 @@
 session_start();
 include 'config.php';
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['userID'])) {
     echo json_encode(['error' => 'Acceso no autorizado']);
     exit;

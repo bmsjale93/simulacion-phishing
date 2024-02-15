@@ -7,14 +7,14 @@ $(document).ready(function() {
 
         // Realiza la solicitud AJAX al servidor
         $.ajax({
-          url: "simulacion-phishing/assets/database/crearCampana.php",
+          url: "/simulacion-phishing/assets/database/crearCampana.php",
           type: "POST",
           data: formData,
           contentType: false, // No especificar ningún tipo de contenido debido a FormData
           processData: false, // No procesar los datos para evitar que jQuery los convierta en una cadena de consulta
           success: function (response) {
             alert(response);
-            $("#crearCampañaModal").modal("hide");
+            $("#crearCampanaModal").modal("hide");
             location.reload();
           },
           error: function (xhr, status, error) {

@@ -6,7 +6,6 @@
 $(document).ready(function () {
   // Cargar modales y asignar manejadores de eventos
   loadModals();
-  assignEventHandlers();
 });
 
 // Función para cargar modales

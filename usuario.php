@@ -76,9 +76,7 @@ $conn->close();
           <div class="card mb-4">
             <div class="card-header">Mis Campañas de Phishing</div>
             <div class="card-body">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearCampañaModal">
-                Crear Nueva Campaña
-              </button>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearCampanaModal">Crear Nueva Campaña</button>
               <!-- Listado de Campañas -->
               <div class="list-group">
                 <?php foreach ($campañas as $campaña) { ?>
@@ -102,8 +100,8 @@ $conn->close();
     </div>
   </footer>
 
-  <div id="register-modal-container">
-    <?php include 'modalCrearCampana.php'; ?>
+  <div id="crear-campana-modal-container">
+    <?php include 'crearCampanaModal.html'; ?>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
