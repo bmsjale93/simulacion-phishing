@@ -59,13 +59,13 @@ $stmt->close();
           <div class="card">
             <div class="card-header">Información Personal</div>
             <div class="card-body">
-              <p>Nombre: <?php echo htmlspecialchars($userInfo['Nombre']); ?></p>
+              <p id="nombreUsuario">Nombre: <?php echo htmlspecialchars($userInfo['Nombre']); ?></p>
               <p>Email: <?php echo htmlspecialchars($userInfo['Email']); ?></p>
-              <p>Dirección: <?php echo htmlspecialchars($userInfo['Direccion']); ?></p>
-              <p>Ciudad: <?php echo htmlspecialchars($userInfo['Ciudad']); ?></p>
-              <p>País: <?php echo htmlspecialchars($userInfo['Pais']); ?></p>
-              <p>Código Postal: <?php echo htmlspecialchars($userInfo['CodigoPostal']); ?></p>
-              <p>Teléfono: <?php echo htmlspecialchars($userInfo['Telefono']); ?></p>
+              <p>Dirección: <span id="direccionUsuario"><?php echo htmlspecialchars($userInfo['Direccion']); ?></span></p>
+              <p>Ciudad: <span id="ciudadUsuario"><?php echo htmlspecialchars($userInfo['Ciudad']); ?></span></p>
+              <p>País: <span id="paisUsuario"><?php echo htmlspecialchars($userInfo['Pais']); ?></span></p>
+              <p>Código Postal: <span id="codigoPostalUsuario"><?php echo htmlspecialchars($userInfo['CodigoPostal']); ?></span></p>
+              <p>Teléfono: <span id="telefonoUsuario"><?php echo htmlspecialchars($userInfo['Telefono']); ?></span></p>
               <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editarInfoModal">Editar Información</button>
             </div>
           </div>
@@ -100,8 +100,11 @@ $stmt->close();
   </footer>
 
   <div id="crear-campana-modal-container">
-    <?php include 'crearCampanaModal.php';
-    $conn->close(); ?>
+    <?php
+    include 'crearCampanaModal.php';
+    include 'editInfoModal.php';
+    $conn->close();
+    ?>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -114,7 +117,7 @@ $stmt->close();
   <script src="assets/js/delete_account.js"></script>
   <script src="assets/js/crearCampana.js"></script>
   <script src="assets/js/listarCampanas.js"></script>
-
+  <script src="assets/js/editInfo.js"></script>
 
 </body>
 
