@@ -5,7 +5,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   setupModalTriggers();
   setupModalCloseButton();
-  setupCrearCampanaModal(); // Añade esta línea
 });
 
 function setupModalTriggers() {
@@ -34,19 +33,4 @@ function setupModalCloseButton() {
       $("#loginModal").modal("hide");
     });
   }
-}
-
-function setupCrearCampanaModal() {
-  // Abre el modal de crear campaña
-  document.querySelectorAll(".crear-campana-trigger").forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
-      $("#crearCampañaModal").modal("show");
-    });
-  });
-
-  // Cierra el modal de crear campaña
-  $("#crearCampañaModal .close").on("click", function () {
-    $("#crearCampañaModal").modal("hide");
-  });
 }

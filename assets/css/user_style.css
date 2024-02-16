@@ -141,3 +141,112 @@ a:hover {
     padding-right: 15px;
   }
 }
+
+
+/*--------------------------------------------------------------
+# Modal
+--------------------------------------------------------------*/
+
+/* Mejoras generales para la ventana modal */
+.modal-dialog {
+    max-width: 600px;
+    margin: 30px auto;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Fuente más moderna */
+}
+
+.modal-content {
+    border-radius: 8px; /* Bordes más redondeados */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra más suave y extendida */
+    border: none; /* Eliminar borde por defecto */
+}
+
+/* Cabecera del modal con mejor contraste y diseño */
+.modal-header {
+    border-bottom: 2px solid #dee2e6; /* Borde más definido */
+    padding: 16px 24px;
+    background-color: #fff; /* Fondo más claro para contraste */
+    color: #333; /* Texto más oscuro para mejor lectura */
+}
+
+.modal-title {
+    font-weight: 600; /* Más peso para el título */
+    color: #0056b3; /* Color más vibrante para el título */
+    font-size: 22px; /* Tamaño ligeramente mayor */
+}
+
+/* Cuerpo del modal */
+.modal-body {
+    padding: 20px;
+    background-color: #f8f9fa; /* Fondo ligeramente gris para diferenciar secciones */
+    color: #333; /* Color de texto oscuro para mejor contraste */
+}
+
+/* Pie de página del modal con separación y alineación mejoradas */
+.modal-footer {
+    border-top: 2px solid #dee2e6; /* Borde superior más definido */
+    padding: 12px 24px;
+    background-color: #fff; /* Consistencia con el encabezado */
+    text-align: right; /* Alineación derecha para acciones */
+}
+
+/* Botones primarios y secundarios con mejor feedback visual */
+.btn-primary, .btn-secondary {
+    border-radius: 4px; /* Bordes redondeados para los botones */
+    color: #fff; /* Texto blanco para mayor contraste */
+    padding: 8px 12px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de letra adecuado */
+    transition: background-color 0.2s; /* Transición suave de color */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Azul más intenso */
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Oscurecer al pasar el mouse */
+    border-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62; /* Oscurecer al pasar el mouse */
+    border-color: #545b62;
+}
+
+/* Mejoras en la interactividad y la presentación de los formularios */
+.form-control, .form-control-file {
+    border-radius: 4px; /* Bordes redondeados para los inputs */
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 16px; /* Tamaño de letra mayor para fácil lectura */
+}
+
+select.form-control {
+    background: url('data:image/svg+xml;utf8,<svg...>') no-repeat right 10px center; /* Icono personalizado para el desplegable */
+    -webkit-appearance: none; /* Desactivar estilo por defecto en WebKit/Blink */
+    -moz-appearance: none; /* Desactivar estilo por defecto en Firefox */
+    appearance: none; /* Desactivar estilo nativo */
+}
+
+input[type="radio"] {
+    accent-color: #007bff; /* Color de acento para radios */
+}
+
+label {
+    margin-bottom: 8px; /* Espaciado uniforme para etiquetas */
+    color: #495057; /* Color oscuro para mejor contraste */
+}
+
+/* Ajustes específicos para secciones dentro del modal */
+#metodoCorreos label:first-child, #introducirCorreos, #subidaMasiva {
+    padding-top: 10px;
+}
+
+.form-group {
+    padding: 0 15px; /* Espaciado lateral para agrupaciones de formularios */
+}

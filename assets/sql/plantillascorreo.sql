@@ -3,4 +3,5 @@ CREATE TABLE PlantillasCorreo (
     Nombre VARCHAR(100) NOT NULL,
     Asunto VARCHAR(255) NOT NULL,
     Cuerpo TEXT NOT NULL
+    LogoURL VARCHAR(255);
 );
