@@ -147,6 +147,20 @@ a:hover {
 # Modal
 --------------------------------------------------------------*/
 
+body {
+    background-color: #f4f5f7; /* Fondo más claro para el cuerpo */
+    color: #333; /* Mejorar la legibilidad del texto */
+    font-family: 'Nunito', sans-serif; /* Fuente más moderna y legible */
+}
+
+.navbar {
+    background-color: #007bff; /* Color primario */
+    color: #ffffff; /* Texto blanco para contraste */
+}
+.navbar-brand, .navbar-nav .nav-link {
+    color: #ffffff;
+}
+
 /* Mejoras generales para la ventana modal */
 .modal-dialog {
     max-width: 600px;
@@ -203,19 +217,14 @@ a:hover {
     border-color: #007bff;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3; /* Oscurecer al pasar el mouse */
-    border-color: #0056b3;
+.btn-primary:hover, .btn-secondary:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
+
 
 .btn-secondary {
     background-color: #6c757d;
     border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #545b62; /* Oscurecer al pasar el mouse */
-    border-color: #545b62;
 }
 
 /* Mejoras en la interactividad y la presentación de los formularios */
@@ -249,4 +258,10 @@ label {
 
 .form-group {
     padding: 0 15px; /* Espaciado lateral para agrupaciones de formularios */
+}
+
+#campaignStatsChart {
+    max-width: 100%; /* Asegura responsividad */
+    height: auto; /* Mantiene la proporción */
+    margin-bottom: 20px; /* Espaciado debajo del gráfico */
 }
