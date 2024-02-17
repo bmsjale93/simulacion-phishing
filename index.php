@@ -370,7 +370,7 @@ session_start();
     <!-- Footer -->
     <footer class="py-4 bg-dark text-white-50">
         <div class="container text-center">
-            <small>Portal de Búsqueda de Trabajo © 2024 | Desarrollado por Alejandro Delgado & Álzaro Alvarez |</small>
+            <small>Portal para Simulación de Phishing © 2024 | Desarrollado por Alejandro Delgado |</small>
         </div>
     </footer>
 

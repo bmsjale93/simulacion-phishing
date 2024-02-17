@@ -8,15 +8,10 @@ if (!isset($_SESSION['userID'])) {
 }
 $userID = $_SESSION['userID'];
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-
 include 'assets/database/get_user_info.php';
 include 'assets/database/get_last_campaign_details.php';
 include 'assets/database/get_at_risk_users.php';
 include 'assets/database/calculate_campaign_statistics.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -119,7 +114,6 @@ include 'assets/database/calculate_campaign_statistics.php';
                   <tr>
                     <th>Email Destinatario</th>
                     <th>Estado de Entrega</th>
-                    <th>Correo Abierto</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -127,7 +121,6 @@ include 'assets/database/calculate_campaign_statistics.php';
                     <tr>
                       <td><?= htmlspecialchars($detalle['EmailDestinatario']) ?></td>
                       <td><?= htmlspecialchars($detalle['Estado']) ?></td>
-                      <td><?= $detalle['ClickEnlace'] === 'No' ? 'No' : 'Sí' ?></td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -153,7 +146,7 @@ include 'assets/database/calculate_campaign_statistics.php';
 
   <footer class="py-4 bg-dark text-white-50">
     <div class="container text-center">
-      <small>Portal de Búsqueda de Trabajo © 2024 | Desarrollado por Alejandro Delgado & Álzaro Alvarez |</small>
+      <small>Portal para Simulación de Phishing © 2024 | Desarrollado por Alejandro Delgado |</small>
     </div>
   </footer>
 
