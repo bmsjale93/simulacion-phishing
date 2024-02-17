@@ -1,3 +1,4 @@
+-- Creación de la tabla Usuarios
 CREATE TABLE Usuarios (
     ID INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,
@@ -12,48 +13,69 @@ CREATE TABLE Usuarios (
     FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Creación de la tabla PlantillasCorreo
 CREATE TABLE PlantillasCorreo (
     IDPlantilla INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Asunto VARCHAR(255) NOT NULL,
     Cuerpo TEXT NOT NULL,
-    LogoURL VARCHAR(255);
+    LogoURL VARCHAR(255)
 );
 
+-- Creación de la tabla PlantillasPersonalizadas
+CREATE TABLE PlantillasPersonalizadas (
+    IDPlantillaPersonalizada INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    IDUsuario INT(6) UNSIGNED,
+    Nombre VARCHAR(100) NOT NULL,
+    Asunto VARCHAR(255) NOT NULL,
+    Cuerpo TEXT NOT NULL,
+    LogoURL VARCHAR(255),
+    FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID) ON DELETE CASCADE
+);
+
+-- Creación de la tabla Campañas
 CREATE TABLE Campañas (
     IDCampaña INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDUsuario INT(6) UNSIGNED,
     IDPlantilla INT(6) UNSIGNED NULL,
+    IDPlantillaPersonalizada INT(6) UNSIGNED NULL,
     Nombre VARCHAR(100) NOT NULL,
     Descripción TEXT,
     FechaInicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FechaFin TIMESTAMP NULL,
-    FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID),
-    FOREIGN KEY (IDPlantilla) REFERENCES PlantillasCorreo(IDPlantilla)
+    FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID) ON DELETE CASCADE,
+    FOREIGN KEY (IDPlantilla) REFERENCES PlantillasCorreo(IDPlantilla) ON DELETE
+    SET
+        NULL,
+        FOREIGN KEY (IDPlantillaPersonalizada) REFERENCES PlantillasPersonalizadas(IDPlantillaPersonalizada) ON DELETE
+    SET
+        NULL
 );
 
+-- Creación de la tabla Envíos
 CREATE TABLE Envíos (
     IDEnvío INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDCampaña INT(6) UNSIGNED,
     FechaEnvío TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     TipoEnvío ENUM('único', 'masivo') NOT NULL,
-    FOREIGN KEY (IDCampaña) REFERENCES Campañas(IDCampaña)
+    FOREIGN KEY (IDCampaña) REFERENCES Campañas(IDCampaña) ON DELETE CASCADE
 );
 
+-- Creación de la tabla Clicks
 CREATE TABLE Clicks (
     IDClick INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDEnvío INT(6) UNSIGNED,
     IDUsuario INT(6) UNSIGNED,
-    -- El ID del empleado que clicó el enlace
     FechaHoraClick TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío),
-    FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID)
+    FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío) ON DELETE CASCADE,
+    FOREIGN KEY (IDUsuario) REFERENCES Usuarios(ID) ON DELETE CASCADE
 );
 
+-- Creación de la tabla DetallesEnvíos
 CREATE TABLE DetallesEnvíos (
     IDDetalle INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDEnvío INT(6) UNSIGNED,
     EmailDestinatario VARCHAR(50) NOT NULL,
     Estado ENUM('entregado', 'fallido') NOT NULL,
-    FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío)
+    FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío) ON DELETE CASCADE
 );

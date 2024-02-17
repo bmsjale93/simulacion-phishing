@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  // Lógica para mostrar/ocultar secciones del formulario
   $("#tipoCampana").change(function () {
     if ($(this).val() == "personalizada") {
       $("#campanaPersonalizada").show();
@@ -20,23 +19,19 @@ $(document).ready(function () {
     }
   });
 
-  // Escucha cambios en el select de plantillas
   $("#ejemploCampana").change(function () {
     var plantillaId = $(this).val();
-    // Solo procede si se selecciona una plantilla válida
     if (plantillaId) {
       $.ajax({
         url:
           "/simulacion-phishing/assets/database/crearCampana.php?action=getPlantillaDetails&IDPlantilla=" +
           plantillaId,
         type: "GET",
-        data: { IDPlantilla: plantillaId },
         dataType: "json",
         success: function (data) {
           $("#nombreCampana").val(data.Nombre);
           $("#asuntoCorreo").val(data.Asunto);
           $("#cuerpoCorreo").val(data.Cuerpo);
-          // $("#logoCampana").attr("src", data.LogoURL);
         },
         error: function (xhr, status, error) {
           alert("Ocurrió un error al cargar los detalles de la plantilla.");
@@ -45,29 +40,66 @@ $(document).ready(function () {
     }
   });
 
-  // Manejo del evento submit del formulario para realizar la solicitud AJAX
   $("#formCrearCampana").on("submit", function (e) {
     e.preventDefault();
+    if (!validarCamposObligatorios()) {
+      alert("Por favor, complete todos los campos obligatorios.");
+      return;
+    }
 
-    // Crea un FormData con los datos del formulario
     var formData = new FormData(this);
-
-    // Realiza la solicitud AJAX al servidor
     $.ajax({
       url: "/simulacion-phishing/assets/database/crearCampana.php",
       type: "POST",
       data: formData,
-      contentType: false, // No especificar ningún tipo de contenido debido a FormData
-      processData: false, // No procesar los datos para evitar que jQuery los convierta en una cadena de consulta
+      contentType: false,
+      processData: false,
       success: function (response) {
         alert(response);
         $("#crearCampanaModal").modal("hide");
         location.reload();
       },
       error: function (xhr, status, error) {
-        // Manejar errores
         alert("Ocurrió un error al crear la campaña.");
       },
     });
   });
+
+  function validarCamposObligatorios() {
+    var camposRequeridos = [
+      {
+        selector: "#tipoCampana",
+        mensaje: "El tipo de campaña es obligatorio.",
+      },
+      {
+        selector: "#nombreCampana",
+        mensaje: "El nombre de la campaña es obligatorio.",
+      },
+      {
+        selector: "#descripcionCampana",
+        mensaje: "La descripción de la campaña es obligatoria.",
+      },
+    ];
+    var todosLosCamposSonValidos = true;
+
+    $(".error").remove();
+    camposRequeridos.forEach(function (campo) {
+      var valor = $(campo.selector).val().trim();
+      if (valor === "") {
+        mostrarMensajeDeError(campo.selector, campo.mensaje);
+        todosLosCamposSonValidos = false;
+      }
+    });
+
+    return todosLosCamposSonValidos;
+  }
+
+  function mostrarMensajeDeError(selector, mensaje) {
+    var $mensajeError = $(
+      "<span class='error' style='color: red; display: block;'>" +
+        mensaje +
+        "</span>"
+    );
+    $(selector).after($mensajeError);
+  }
 });

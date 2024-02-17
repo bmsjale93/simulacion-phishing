@@ -1,7 +1,7 @@
 <?php
 session_start();
 require 'config.php';
-require 'vendor/autoload.php';
+require '/Applications/MAMP/htdocs/simulacion-phishing/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -12,12 +12,25 @@ if (!isset($_SESSION['userID'])) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getPlantillaDetails' && isset($_GET['IDPlantilla'])) {
+    $idPlantilla = $_GET['IDPlantilla'];
+    $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
+    if ($detallesPlantilla) {
+        echo json_encode($detallesPlantilla);
+    } else {
+        echo json_encode(['error' => 'No se encontraron detalles para la plantilla con ID ' . $idPlantilla]);
+    }
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Validación de campos
     $camposRequeridos = ['tipoCampana', 'nombreCampana', 'descripcionCampana'];
     foreach ($camposRequeridos as $campo) {
         if (empty($_POST[$campo])) {
             echo "<script>alert('El campo $campo es obligatorio.'); window.history.back();</script>";
+            exit;
+        } else {
+            echo "Método de solicitud no permitido.";
             exit;
         }
     }
@@ -34,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $correosUnicos = isset($_POST['correosUnicos']) ? htmlspecialchars($_POST['correosUnicos']) : '';
         $archivoCorreos = $_FILES['archivoCorreos']['tmp_name'] ?? null;
 
-        // Validación y manejo de archivos
         if ($archivoCorreos) {
             $tipoArchivoPermitido = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
             if (!in_array($_FILES['archivoCorreos']['type'], $tipoArchivoPermitido) || $_FILES['archivoCorreos']['size'] > 5000000) {
@@ -60,30 +72,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "Método de solicitud no permitido.";
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getPlantillaDetails' && isset($_GET['IDPlantilla'])) {
-    $idPlantilla = $_GET['IDPlantilla'];
-    $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
-    if ($detallesPlantilla) {
-        echo json_encode($detallesPlantilla);
-    } else {
-        echo json_encode(['error' => 'No se encontraron detalles para la plantilla con ID ' . $idPlantilla]);
-    }
-    exit;
-}
-
 function insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla = null)
 {
-    $sql = "INSERT INTO Campañas (IDUsuario, Nombre, Descripción, IDPlantilla, FechaInicio) VALUES (?, ?, ?, ?, NOW())";
+    $sql = "INSERT INTO Campañas (IDUsuario, Nombre, Descripcion, IDPlantilla, FechaInicio) VALUES (?, ?, ?, ?, NOW())";
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("issi", $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla);
         if ($stmt->execute()) {
-            return $conn->insert_id; 
+            return $conn->insert_id;
         }
         $stmt->close();
     }
     return false;
 }
-
 
 function procesarCorreosUnicos($conn, $idCampana, $correosUnicos)
 {
@@ -163,7 +163,6 @@ function enviarCorreoPersonalizado($emailDestinatario, $nombreDestinatario, $asu
 
 function obtenerDetallesPlantilla($conn, $idPlantilla)
 {
-    // Implementación de la función, como se describió anteriormente
     $sql = "SELECT Nombre, Asunto, Cuerpo, LogoURL FROM PlantillasCorreo WHERE IDPlantilla = ?";
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("i", $idPlantilla);
