@@ -48,6 +48,18 @@ function handlePostRequest($conn)
         }
     }
 
+    // Manejo de la subida de la imagen de logo
+    $imagenLogoUrl = '';
+    if (isset($_FILES['logoImagen']) && $_FILES['logoImagen']['error'] == UPLOAD_ERR_OK) {
+        $directorioSubidas = '/simulacion-phishing/assets/img/empresas';
+        $nombreArchivo = basename($_FILES['logoImagen']['name']);
+        $rutaArchivoSubido = $directorioSubidas . $nombreArchivo;
+
+        if (move_uploaded_file($_FILES['logoImagen']['tmp_name'], $rutaArchivoSubido)) {
+            $imagenLogoUrl = '/simulacion-phishing/assets/img/empresas/' . $nombreArchivo;
+        }
+    }
+
     $idUsuario = $_SESSION['userID'];
     $nombreCampana = htmlspecialchars($_POST['nombreCampana']);
     $descripcionCampana = htmlspecialchars($_POST['descripcionCampana']);
@@ -56,10 +68,10 @@ function handlePostRequest($conn)
 
     if ($_POST['tipoPlantilla'] === 'predeterminada') {
         $idPlantilla = isset($_POST['IDPlantilla']) ? $_POST['IDPlantilla'] : null;
-        $idPlantillaPersonalizada = null; // Asegúrate de que este valor sea nulo si no se usa
+        $idPlantillaPersonalizada = null;
     } elseif ($_POST['tipoPlantilla'] === 'personalizada') {
         $idPlantillaPersonalizada = isset($_POST['IDPlantillaPersonalizada']) ? $_POST['IDPlantillaPersonalizada'] : null;
-        $idPlantilla = null; // Asegúrate de que este valor sea nulo si no se usa
+        $idPlantilla = null;
     } else {
         echo json_encode(['error' => "El tipo de plantilla seleccionado no es válido"]);
         exit;
@@ -69,7 +81,8 @@ function handlePostRequest($conn)
     try {
         $idCampana = insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla, $idPlantillaPersonalizada);
         $idEnvio = insertarEnvio($conn, $idCampana, 'único');
-        procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio);
+        $datosPersonalizados = null;
+        procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla, $datosPersonalizados);
 
         $conn->commit();
         echo json_encode(['success' => 'Campaña creada con éxito', 'idCampana' => $idCampana]);
@@ -97,7 +110,7 @@ function insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana,
     return $idCampana;
 }
 
-function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio)
+function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null)
 {
     $correosArray = explode(',', $correosUnicos);
     foreach ($correosArray as $correo) {
@@ -106,14 +119,24 @@ function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana
             continue; // Omitir correos inválidos
         }
 
-        $envioExitoso = enviarCorreo($correo, "Asunto de prueba", "Cuerpo del correo", $nombreCampana);
+        if ($tipoPlantilla === 'personalizada') {
+            // Asumiendo que los datos personalizados se recogen de alguna manera, por ejemplo, desde $_POST o una función
+            $datosPersonalizados = obtenerDatosPersonalizados();
+
+            // Verificación de los datos personalizados
+            if (empty($datosPersonalizados['asunto']) || empty($datosPersonalizados['cuerpo'])) {
+                echo json_encode(['error' => "Los datos personalizados de asunto y cuerpo son obligatorios para campañas personalizadas."]);
+                exit;
+            }
+        }
+
+        // Ajuste en la llamada a enviarCorreo con parámetros adicionales
+        $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados);
         $estadoEnvio = $envioExitoso ? 'entregado' : 'fallido';
 
         insertarDetalleEnvio($conn, $idCampana, $correo, $estadoEnvio, $idEnvio);
     }
 }
-
-
 function obtenerDetallesPlantilla($conn, $idPlantilla)
 {
     $sql = "SELECT Nombre, Asunto, Cuerpo, LogoURL FROM PlantillasCorreo WHERE IDPlantilla = ?";
@@ -129,25 +152,61 @@ function obtenerDetallesPlantilla($conn, $idPlantilla)
     }
     $resultado = $stmt->get_result()->fetch_assoc();
     $stmt->close();
-    return $resultado ?: null;
+    return $resultado ? $resultado : null;
 }
 
-function enviarCorreo($emailDestinatario, $asunto, $cuerpo, $nombreCampana)
+
+function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null)
 {
     $mail = new PHPMailer(true);
     try {
+        // Configuración inicial de PHPMailer
         $mail->isSMTP();
-        $mail->Host = 'smtp-relay.brevo.com'; // Especifica tu servidor SMTP
+        $mail->Host = 'smtp-relay.brevo.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'bmsjale@gmail.com'; // SMTP username
-        $mail->Password = 'gMAVXYwhSH8Lv0j4'; // SMTP password
+        $mail->Username = 'bmsjale@gmail.com';
+        $mail->Password = 'gMAVXYwhSH8Lv0j4';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
-
+        $mail->CharSet = 'UTF-8';
         $mail->setFrom('bmsjale@gmail.com', $nombreCampana);
         $mail->addAddress($emailDestinatario);
-
         $mail->isHTML(true);
+
+        // Construcción dinámica del cuerpo del correo
+        $asunto = '';
+        $cuerpo = '';
+
+        if ($tipoPlantilla === 'predeterminada' && $idPlantilla !== null) {
+            $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
+            if ($detallesPlantilla !== null) {
+                $asunto = $detallesPlantilla['Asunto'];
+                $cuerpo = $detallesPlantilla['Cuerpo'];
+                if (!empty($detallesPlantilla['LogoURL'])) {
+                    $cuerpo .= "<br><div style='text-align: center;'><img src='{$detallesPlantilla['LogoURL']}' alt='Logo' style='max-width: 100px;'></div>";
+                }
+            } else {
+                error_log("Detalles de la plantilla no encontrados para el ID: $idPlantilla");
+                return false;
+            }
+        } elseif ($tipoPlantilla === 'personalizada' && $datosPersonalizados !== null) {
+            // Extraer correctamente los datos de $datosPersonalizados
+            $asunto = $datosPersonalizados['asunto'] ?? '';
+            $cuerpo = $datosPersonalizados['cuerpo'] ?? '';
+
+            // Validación de datos personalizados
+            if (empty($asunto) || empty($cuerpo)) {
+                error_log("Datos personalizados incompletos para el destinatario $emailDestinatario");
+                return false;
+            }
+        }
+
+        // Verificación del cuerpo y asunto del correo
+        if (empty($cuerpo) || empty($asunto)) {
+            error_log("El cuerpo o asunto del correo está vacío para el destinatario $emailDestinatario");
+            return false;
+        }
+
         $mail->Subject = $asunto;
         $mail->Body = $cuerpo;
 
@@ -229,4 +288,51 @@ function insertarEnvio($conn, $idCampana, $tipoEnvio = 'único')
     $idEnvio = $conn->insert_id;
     $stmt->close();
     return $idEnvio;
+}
+
+function crearCuerpoCorreo($titulo, $contenido, $urlEngano, $imagenLogo = '')
+{
+    $cuerpoCorreo = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>$titulo</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .btn-engano { display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        .logo { text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>$titulo</h2>
+        <p>$contenido</p>
+        <a href="$urlEngano" class="btn-engano">Haz clic aquí para verificar</a>
+        <div class="logo">
+            <img src="$imagenLogo" alt="Logo" style="max-width: 100px;">
+        </div>
+    </div>
+</body>
+</html>
+HTML;
+
+    return $cuerpoCorreo;
+}
+
+function obtenerDatosPersonalizados()
+{
+    $datos = [];
+    $asuntoCorreo = filter_input(INPUT_POST, 'asuntoCorreo', FILTER_SANITIZE_SPECIAL_CHARS);
+    $cuerpoCorreo = filter_input(INPUT_POST, 'cuerpoCorreo', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    if (empty($asuntoCorreo) || empty($cuerpoCorreo)) {
+        error_log("Datos personalizados de asunto o cuerpo faltantes o inválidos.");
+        return false;
+    } else {
+        $datos['asunto'] = $asuntoCorreo;
+        $datos['cuerpo'] = $cuerpoCorreo;
+    }
+    return $datos;
 }

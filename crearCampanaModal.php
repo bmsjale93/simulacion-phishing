@@ -44,13 +44,13 @@ function obtenerPlantillasCorreo($conn)
             <label for="tipoCampana">Tipo de Campaña:</label>
             <select class="form-control" id="tipoCampana" name="tipoCampana" required>
               <option value="">Seleccione una opción</option>
-              <option value="personalizada">Personalizada</option>
-              <option value="predeterminada">Predeterminada</option>
+              <option value="personalizada" selected>Personalizada</option>
+              <option value="predeterminada">Predefinida</option>
             </select>
             <input type="hidden" id="tipoPlantilla" name="tipoPlantilla" value="">
             <input type="hidden" id="IDPlantilla" name="IDPlantilla">
           </div>
-          <div id="campanaPersonalizada" style="display: none;">
+          <div id="campanaPersonalizada" style="display: block;">
             <div class="form-group">
               <label for="nombreCampana">Nombre de la Campaña:</label>
               <input type="text" class="form-control" id="nombreCampana" name="nombreCampana" required>
@@ -66,6 +66,10 @@ function obtenerPlantillasCorreo($conn)
             <div class="form-group">
               <label for="cuerpoCorreo">Cuerpo del Correo:</label>
               <textarea class="form-control" id="cuerpoCorreo" name="cuerpoCorreo"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="logoImagen">Subir Logo:</label>
+              <input type="file" class="form-control-file" id="logoImagen" name="logoImagen" accept="image/*">
             </div>
           </div>
           <div id="campanaMaquetado" style="display: none;">

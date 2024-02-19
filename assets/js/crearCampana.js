@@ -1,25 +1,22 @@
 $(document).ready(function () {
+  mostrarCamposBasadosEnTipo($("#tipoCampana").val());
+
   $("#tipoCampana").change(function () {
     var tipo = $(this).val();
-    $("#tipoPlantilla").val(tipo); // Actualiza el valor del campo oculto tipoPlantilla
+    mostrarCamposBasadosEnTipo(tipo);
+  });
 
-    // Mostrar/Ocultar secciones basado en el tipo
+  function mostrarCamposBasadosEnTipo(tipo) {
+    $("#tipoPlantilla").val(tipo);
     if (tipo == "personalizada") {
       $("#campanaPersonalizada").show();
       $("#campanaMaquetado").hide();
-      // Reset IDPlantilla si se selecciona personalizada
       $("#IDPlantilla").val("");
     } else {
       $("#campanaMaquetado").show();
       $("#campanaPersonalizada").hide();
     }
-  });
-
-  $("#ejemploCampana").change(function () {
-    var plantillaId = $(this).val();
-    // Actualizar el campo oculto con el ID de la plantilla seleccionada
-    $("#IDPlantilla").val(plantillaId);
-  });
+  }
 
   $("#ejemploCampana").change(function () {
     var plantillaId = $(this).val();
@@ -34,6 +31,10 @@ $(document).ready(function () {
           $("#nombreCampana").val(data.Nombre);
           $("#asuntoCorreo").val(data.Asunto);
           $("#cuerpoCorreo").val(data.Cuerpo);
+          $("#tipoPlantilla").val("predeterminada");
+          $("#IDPlantilla").val(plantillaId);
+          $("#campanaPersonalizada").show();
+          $("#campanaMaquetado").hide();
         },
         error: function (xhr, status, error) {
           alert("Ocurrió un error al cargar los detalles de la plantilla.");
