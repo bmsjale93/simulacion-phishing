@@ -1,22 +1,24 @@
 $(document).ready(function () {
   $("#tipoCampana").change(function () {
-    if ($(this).val() == "personalizada") {
+    var tipo = $(this).val();
+    $("#tipoPlantilla").val(tipo); // Actualiza el valor del campo oculto tipoPlantilla
+
+    // Mostrar/Ocultar secciones basado en el tipo
+    if (tipo == "personalizada") {
       $("#campanaPersonalizada").show();
       $("#campanaMaquetado").hide();
+      // Reset IDPlantilla si se selecciona personalizada
+      $("#IDPlantilla").val("");
     } else {
       $("#campanaMaquetado").show();
       $("#campanaPersonalizada").hide();
     }
   });
 
-  $("input[type=radio][name=metodoCorreos]").change(function () {
-    if (this.value == "manual") {
-      $("#introducirCorreos").show();
-      $("#subidaMasiva").hide();
-    } else if (this.value == "masiva") {
-      $("#subidaMasiva").show();
-      $("#introducirCorreos").hide();
-    }
+  $("#ejemploCampana").change(function () {
+    var plantillaId = $(this).val();
+    // Actualizar el campo oculto con el ID de la plantilla seleccionada
+    $("#IDPlantilla").val(plantillaId);
   });
 
   $("#ejemploCampana").change(function () {

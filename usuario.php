@@ -1,19 +1,18 @@
 <?php
 session_start();
-include 'assets/database/config.php';
+require_once 'assets/database/config.php';
 
 if (!isset($_SESSION['userID'])) {
   header("Location: index.php");
   exit;
 }
+
 $userID = $_SESSION['userID'];
-
-include 'assets/database/get_user_info.php';
-include 'assets/database/get_last_campaign_details.php';
-include 'assets/database/get_at_risk_users.php';
-include 'assets/database/calculate_campaign_statistics.php';
+require 'assets/database/get_user_info.php';
+require 'assets/database/get_last_campaign_details.php';
+require 'assets/database/get_at_risk_users.php';
+require 'assets/database/calculate_campaign_statistics.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -51,9 +50,7 @@ include 'assets/database/calculate_campaign_statistics.php';
   </header>
   <main id="userMain" class="py-4">
     <div class="container">
-      <!-- Primera fila: Información Personal + Campañas de Phishing -->
       <div class="row">
-        <!-- Información Personal -->
         <div class="col-lg-4 mb-4">
           <div class="card">
             <div class="card-header">Información Personal</div>
@@ -69,29 +66,25 @@ include 'assets/database/calculate_campaign_statistics.php';
             </div>
           </div>
         </div>
-        <!-- Campañas de Phishing -->
         <div class="col-lg-8 mb-4">
           <div class="card">
             <div class="card-header">Mis Campañas de Phishing</div>
             <div class="card-body">
               <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#crearCampanaModal">Crear Nueva Campaña</button>
               <div class="list-group">
-                <?php foreach ($campañas as $campaña) { ?>
+                <?php foreach ($campañas as $campaña) : ?>
                   <a href="#" class="list-group-item list-group-item-action">
                     <h5 class="mb-1"><?= htmlspecialchars($campaña['Nombre']); ?></h5>
                     <p class="mb-1"><?= htmlspecialchars($campaña['Descripción']); ?></p>
                     <small>Inicio: <?= htmlspecialchars($campaña['FechaInicio']); ?> - Fin: <?= htmlspecialchars($campaña['FechaFin']); ?></small>
                   </a>
-                <?php } ?>
+                <?php endforeach; ?>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Segunda fila: Usuarios en riesgo + Usuarios que han recibido la campaña -->
       <div class="row">
-        <!-- Usuarios en riesgo de Phishing -->
         <div class="col-md-6 mb-4">
           <div class="card">
             <div class="card-header">Usuarios en riesgo de phishing</div>
@@ -104,7 +97,6 @@ include 'assets/database/calculate_campaign_statistics.php';
             </div>
           </div>
         </div>
-        <!-- Usuarios que han recibido la campaña -->
         <div class="col-md-6 mb-4">
           <div class="card">
             <div class="card-header">Usuarios que han recibido la campaña</div>
@@ -129,8 +121,6 @@ include 'assets/database/calculate_campaign_statistics.php';
           </div>
         </div>
       </div>
-
-      <!-- Tercera fila: Estadísticas de la campaña -->
       <div class="row">
         <div class="col-md-12 mb-4">
           <div class="card">
@@ -143,42 +133,34 @@ include 'assets/database/calculate_campaign_statistics.php';
       </div>
     </div>
   </main>
-
   <footer class="py-4 bg-dark text-white-50">
     <div class="container text-center">
       <small>Portal para Simulación de Phishing © 2024 | Desarrollado por Alejandro Delgado |</small>
     </div>
   </footer>
-
-  <div id="crear-campana-modal-container">
-    <?php
-    include 'crearCampanaModal.php';
-    include 'editInfoModal.php';
-    $conn->close();
-    ?>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      drawCampaignStatsChart(<?= $estadisticas['TotalEnvios'] ?>, <?= $estadisticas['Entregados'] ?>, <?= $estadisticas['Clicks'] ?>);
-    });
-  </script>
-
+  <?php include 'crearCampanaModal.php'; ?>
+  <?php include 'editInfoModal.php'; ?>
+  <?php $conn->close(); ?>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      drawCampaignStatsChart(
+        <?= isset($estadisticas['TotalEnvios']) ? $estadisticas['TotalEnvios'] : 0 ?>,
+        <?= isset($estadisticas['Entregados']) ? $estadisticas['Entregados'] : 0 ?>,
+        <?= isset($estadisticas['Clicks']) ? $estadisticas['Clicks'] : 0 ?>
+      );
+    });
+  </script>
 
-  <script src="assets/js/modal.js"></script>
   <script src="assets/js/login_register.js"></script>
   <script src="assets/js/delete_account.js"></script>
   <script src="assets/js/crearCampana.js"></script>
   <script src="assets/js/listarCampanas.js"></script>
   <script src="assets/js/editInfo.js"></script>
   <script src="assets/js/campaignStatsChart.js"></script>
-
-
 </body>
 
 </html>

@@ -1,210 +1,232 @@
 <?php
 session_start();
-require 'config.php';
-require '/Applications/MAMP/htdocs/simulacion-phishing/vendor/autoload.php';
+require_once 'config.php';
+require_once '/Applications/MAMP/htdocs/simulacion-phishing/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['userID'])) {
-    header("Location: index.php");
+    echo json_encode(['error' => 'Usuario no autenticado']);
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getPlantillaDetails' && isset($_GET['IDPlantilla'])) {
-    $idPlantilla = $_GET['IDPlantilla'];
-    $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
-    if ($detallesPlantilla) {
-        echo json_encode($detallesPlantilla);
+// Redirige según el método de solicitud HTTP.
+switch ($_SERVER['REQUEST_METHOD']) {
+    case 'GET':
+        handleGetRequest($conn);
+        break;
+    case 'POST':
+        handlePostRequest($conn);
+        break;
+    default:
+        echo json_encode(['error' => 'Método de solicitud no soportado.']);
+        exit;
+}
+
+function handleGetRequest($conn)
+{
+    if (isset($_GET['action']) && $_GET['action'] === 'getPlantillaDetails' && isset($_GET['IDPlantilla'])) {
+        $idPlantilla = $_GET['IDPlantilla'];
+        $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
+        echo $detallesPlantilla ? json_encode($detallesPlantilla) : json_encode(['error' => 'No se encontraron detalles para la plantilla con ID ' . $idPlantilla]);
     } else {
-        echo json_encode(['error' => 'No se encontraron detalles para la plantilla con ID ' . $idPlantilla]);
+        echo json_encode(['error' => 'Acción GET no válida o parámetros faltantes.']);
     }
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $camposRequeridos = ['tipoCampana', 'nombreCampana', 'descripcionCampana'];
-    $camposFaltantes = [];
+function handlePostRequest($conn)
+{
+    $camposRequeridos = ['nombreCampana', 'descripcionCampana', 'tipoPlantilla', 'correosUnicos'];
     foreach ($camposRequeridos as $campo) {
         if (empty($_POST[$campo])) {
-            $camposFaltantes[] = $campo;
+            echo json_encode(['error' => "El campo $campo es obligatorio"]);
+            exit;
         }
     }
-    if (!empty($camposFaltantes)) {
-        echo "<script>alert('Los campos " . implode(", ", $camposFaltantes) . " son obligatorios.'); window.history.back();</script>";
+
+    $idUsuario = $_SESSION['userID'];
+    $nombreCampana = htmlspecialchars($_POST['nombreCampana']);
+    $descripcionCampana = htmlspecialchars($_POST['descripcionCampana']);
+    $tipoPlantilla = htmlspecialchars($_POST['tipoPlantilla']);
+    $correosUnicos = htmlspecialchars($_POST['correosUnicos']);
+
+    if ($_POST['tipoPlantilla'] === 'predeterminada') {
+        $idPlantilla = isset($_POST['IDPlantilla']) ? $_POST['IDPlantilla'] : null;
+        $idPlantillaPersonalizada = null; // Asegúrate de que este valor sea nulo si no se usa
+    } elseif ($_POST['tipoPlantilla'] === 'personalizada') {
+        $idPlantillaPersonalizada = isset($_POST['IDPlantillaPersonalizada']) ? $_POST['IDPlantillaPersonalizada'] : null;
+        $idPlantilla = null; // Asegúrate de que este valor sea nulo si no se usa
+    } else {
+        echo json_encode(['error' => "El tipo de plantilla seleccionado no es válido"]);
         exit;
     }
 
     $conn->begin_transaction();
     try {
-        $idUsuario = $_SESSION['userID'];
-        $tipoCampana = htmlspecialchars($_POST['tipoCampana']);
-        $nombreCampana = htmlspecialchars($_POST['nombreCampana']);
-        $descripcionCampana = htmlspecialchars($_POST['descripcionCampana']);
-        $cabeceraCorreo = isset($_POST['cabeceraCorreo']) ? htmlspecialchars($_POST['cabeceraCorreo']) : null;
-        $asuntoCorreo = isset($_POST['asuntoCorreo']) ? htmlspecialchars($_POST['asuntoCorreo']) : null;
-        $cuerpoCorreo = isset($_POST['cuerpoCorreo']) ? htmlspecialchars($_POST['cuerpoCorreo']) : null;
-        $correosUnicos = isset($_POST['correosUnicos']) ? htmlspecialchars($_POST['correosUnicos']) : '';
-        $archivoCorreos = $_FILES['archivoCorreos']['tmp_name'] ?? null;
-
-        if ($archivoCorreos) {
-            $tipoArchivoPermitido = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
-            if (!in_array($_FILES['archivoCorreos']['type'], $tipoArchivoPermitido) || $_FILES['archivoCorreos']['size'] > 5000000) {
-                throw new Exception('Tipo de archivo no permitido o el archivo es demasiado grande.');
-            }
-        }
-
-        $idCampana = insertarCampana($conn, $idUsuario, $tipoCampana, $nombreCampana, $descripcionCampana);
-        if (!$idCampana) {
-            throw new Exception('Error al crear la campaña.');
-        }
-
-        procesarCorreosUnicos($conn, $idCampana, $correosUnicos);
-        procesarArchivoCorreos($conn, $idCampana, $archivoCorreos, $asuntoCorreo, $cuerpoCorreo, $nombreCampana);
+        $idCampana = insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla, $idPlantillaPersonalizada);
+        $idEnvio = insertarEnvio($conn, $idCampana, 'único');
+        procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio);
 
         $conn->commit();
-        echo "<script>alert('Campaña creada con éxito.'); window.location.href='usuario.php';</script>";
+        echo json_encode(['success' => 'Campaña creada con éxito', 'idCampana' => $idCampana]);
     } catch (Exception $e) {
         $conn->rollback();
-        echo "<script>alert('{$e->getMessage()}'); window.history.back();</script>";
+        echo json_encode(['error' => $e->getMessage()]);
     }
-} else {
-    echo "Método de solicitud no permitido.";
     exit;
 }
 
-function insertarCampana($conn, $idUsuario, $tipoCampana, $nombreCampana, $descripcionCampana, $idPlantilla = null)
+function insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla, $idPlantillaPersonalizada)
 {
-    $sql = "INSERT INTO Campañas (IDUsuario, TipoCampana, Nombre, Descripcion, IDPlantilla, FechaInicio) VALUES (?, ?, ?, ?, ?, NOW())";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("isssi", $idUsuario, $tipoCampana, $nombreCampana, $descripcionCampana, $idPlantilla);
-        if ($stmt->execute()) {
-            return $conn->insert_id;
+    $sql = "INSERT INTO Campañas (IDUsuario, Nombre, Descripción, IDPlantilla, IDPlantillaPersonalizada, FechaInicio) VALUES (?, ?, ?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Error al preparar la inserción de la campaña: ' . $conn->error);
+    }
+
+    $stmt->bind_param("issii", $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla, $idPlantillaPersonalizada);
+    if (!$stmt->execute()) {
+        throw new Exception('Error al insertar la campaña: ' . $conn->error);
+    }
+    $idCampana = $conn->insert_id;
+    $stmt->close();
+    return $idCampana;
+}
+
+function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio)
+{
+    $correosArray = explode(',', $correosUnicos);
+    foreach ($correosArray as $correo) {
+        $correo = trim($correo);
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            continue; // Omitir correos inválidos
         }
-        $stmt->close();
-    }
-    return false;
-}
 
-function procesarCorreosUnicos($conn, $idCampana, $correosUnicos)
-{
-    if (!empty($correosUnicos)) {
-        $correosArray = explode(',', $correosUnicos);
-        foreach ($correosArray as $correo) {
-            $correo = trim($correo);
-            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                continue;
-            }
-            $sqlEnvio = "INSERT INTO DetallesEnvíos (IDCampana, EmailDestinatario, Estado) VALUES (?, ?, 'pendiente')";
-            if ($stmtEnvio = $conn->prepare($sqlEnvio)) {
-                $stmtEnvio->bind_param("is", $idCampana, $correo);
-                $stmtEnvio->execute();
-                $stmtEnvio->close();
-            }
-        }
+        $envioExitoso = enviarCorreo($correo, "Asunto de prueba", "Cuerpo del correo", $nombreCampana);
+        $estadoEnvio = $envioExitoso ? 'entregado' : 'fallido';
+
+        insertarDetalleEnvio($conn, $idCampana, $correo, $estadoEnvio, $idEnvio);
     }
 }
 
-function procesarArchivoCorreos($conn, $idCampana, $archivoCorreos, $asuntoCorreo, $cuerpoCorreo, $nombreCampana)
-{
-    if ($archivoCorreos && file_exists($archivoCorreos)) {
-        $correosYnombres = leerArchivoCorreos($archivoCorreos);
-        foreach ($correosYnombres as $cn) {
-            $correo = $cn['correo'];
-            $nombreDestinatario = $cn['nombre'] ?? '';
-            enviarCorreoPersonalizado($correo, $nombreDestinatario, $asuntoCorreo, $cuerpoCorreo, $nombreCampana);
-        }
-    }
-}
-
-function leerArchivoCorreos($archivo)
-{
-    $correosYnombres = [];
-    $extension = pathinfo($archivo, PATHINFO_EXTENSION);
-    try {
-        $reader = ($extension === 'csv') ? new \PhpOffice\PhpSpreadsheet\Reader\Csv() : IOFactory::createReaderForFile($archivo);
-        $spreadsheet = $reader->load($archivo);
-        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-        foreach ($sheetData as $row) {
-            $correo = $row['A'] ?? null;
-            $nombre = $row['B'] ?? '';
-            if ($correo && filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                $correosYnombres[] = ['correo' => $correo, 'nombre' => $nombre];
-            }
-        }
-    } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-        die('Error al leer el archivo: ' . $e->getMessage());
-    }
-    return $correosYnombres;
-}
-
-function enviarCorreoPersonalizado($emailDestinatario, $nombreDestinatario, $asunto, $cuerpoBase, $nombreCampana)
-{
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp-relay.brevo.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'bmsjale@gmail.com';
-        $mail->Password = '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';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-
-        $mail->setFrom('tu_correo@dominio.com', $nombreCampana);
-        $mail->addAddress($emailDestinatario, $nombreDestinatario);
-
-        $mail->isHTML(true);
-        $mail->Subject = $asunto;
-        $mail->Body = "<!DOCTYPE html>
-<html lang='es'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: auto; background: #ffffff; padding: 20px; }
-        .header { text-align: center; padding-bottom: 20px; }
-        .content { font-size: 16px; color: #444444; }
-        .footer { font-size: 12px; text-align: center; padding-top: 20px; border-top: 1px solid #ddd; }
-        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <img src='cid:logo' alt='Logo' style='max-width: 100px;'>
-        </div>
-        <div class='content'>
-            <h1>{$asunto}</h1>
-            <p>Estimado/a {$nombreDestinatario},</p>
-            <p>{$cuerpoBase}</p>
-            <a href='https://www.ejemplo-link.com' class='button'>Haz clic aquí</a>
-        </div>
-        <div class='footer'>
-            <p>Este correo es parte de un proyecto educativo. Si tienes alguna duda o consulta, por favor contacta con nosotros.</p>
-        </div>
-    </div>
-</body>
-</html>";
-        $mail->AltBody = 'Este es el cuerpo en texto plano para clientes de correo no HTML';
-
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("No se pudo enviar el correo a $emailDestinatario: {$mail->ErrorInfo}");
-    }
-}
 
 function obtenerDetallesPlantilla($conn, $idPlantilla)
 {
     $sql = "SELECT Nombre, Asunto, Cuerpo, LogoURL FROM PlantillasCorreo WHERE IDPlantilla = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $idPlantilla);
-        if ($stmt->execute()) {
-            $resultado = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
-            return $resultado;
-        }
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return null;
     }
-    return null;
+
+    $stmt->bind_param("i", $idPlantilla);
+    if (!$stmt->execute()) {
+        $stmt->close();
+        return null;
+    }
+    $resultado = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $resultado ?: null;
+}
+
+function enviarCorreo($emailDestinatario, $asunto, $cuerpo, $nombreCampana)
+{
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp-relay.brevo.com'; // Especifica tu servidor SMTP
+        $mail->SMTPAuth = true;
+        $mail->Username = 'bmsjale@gmail.com'; // SMTP username
+        $mail->Password = 'gMAVXYwhSH8Lv0j4'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom('bmsjale@gmail.com', $nombreCampana);
+        $mail->addAddress($emailDestinatario);
+
+        $mail->isHTML(true);
+        $mail->Subject = $asunto;
+        $mail->Body = $cuerpo;
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Error al enviar correo a $emailDestinatario: " . $mail->ErrorInfo);
+        return false;
+    }
+}
+
+function insertarDestinatario($conn, $idCampana, $correo)
+{
+    $sql = "INSERT INTO DestinatariosCampaña (IDCampaña, EmailDestinatario) VALUES (?, ?)";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Error al preparar la inserción del destinatario: ' . $conn->error);
+    }
+
+    $stmt->bind_param("is", $idCampana, $correo);
+    if (!$stmt->execute()) {
+        throw new Exception('Error al insertar destinatario: ' . $conn->error);
+    }
+    $idDestinatario = $conn->insert_id;
+    $stmt->close();
+    return $idDestinatario;
+}
+
+function insertarDetalleEnvio($conn, $idCampana, $correo, $estadoEnvio, $idEnvio)
+{
+    $sql = "INSERT INTO DetallesEnvíos (IDEnvío, EmailDestinatario, Estado) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Error al preparar la inserción del detalle de envío: ' . $conn->error);
+    }
+
+    $stmt->bind_param("iss", $idEnvio, $correo, $estadoEnvio);
+    if (!$stmt->execute()) {
+        throw new Exception('Error al insertar detalle de envío: ' . $conn->error);
+    }
+    $stmt->close();
+}
+
+function obtenerUltimoIDEnvio($conn, $idCampana)
+{
+    $sql = "SELECT IDEnvío FROM Envíos WHERE IDCampaña = ? ORDER BY FechaEnvío DESC LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Error al preparar la consulta para obtener el último IDEnvío: ' . $conn->error);
+    }
+
+    $stmt->bind_param("i", $idCampana);
+    if (!$stmt->execute()) {
+        throw new Exception('Error al obtener el último IDEnvío: ' . $conn->error);
+    }
+
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $stmt->close();
+        return $row['IDEnvío'];
+    } else {
+        $stmt->close();
+        throw new Exception('No se encontró un IDEnvío para la campaña con ID ' . $idCampana);
+    }
+}
+
+function insertarEnvio($conn, $idCampana, $tipoEnvio = 'único')
+{
+    $sql = "INSERT INTO Envíos (IDCampaña, FechaEnvío, TipoEnvío) VALUES (?, NOW(), ?)";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Error al preparar la inserción de envío: ' . $conn->error);
+    }
+
+    $stmt->bind_param("is", $idCampana, $tipoEnvio);
+    if (!$stmt->execute()) {
+        throw new Exception('Error al insertar envío: ' . $conn->error);
+    }
+    $idEnvio = $conn->insert_id;
+    $stmt->close();
+    return $idEnvio;
 }
