@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($user = $result->fetch_assoc()) {
         if (password_verify($password, $user['Password'])) {
-            // Establecer datos de sesión aquí
             $_SESSION['userID'] = $user['ID'];
             $_SESSION['nombreUsuario'] = $user['Nombre'];
             echo json_encode(['success' => true, 'redirect' => 'usuario.php', 'username' => $user['Nombre']]);

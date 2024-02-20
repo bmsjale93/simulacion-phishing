@@ -61,6 +61,7 @@ CREATE TABLE Envíos (
     FOREIGN KEY (IDCampaña) REFERENCES Campañas(IDCampaña) ON DELETE CASCADE
 );
 
+-- Creación de la tabla DestinatariosCampaña
 CREATE TABLE DestinatariosCampaña (
     IDDestinatario INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     IDCampaña INT(6) UNSIGNED,
@@ -87,6 +88,7 @@ CREATE TABLE DetallesEnvíos (
     FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío) ON DELETE CASCADE
 );
 
+-- Creación de la tabla UsuariosRiesgoPhishing
 CREATE TABLE UsuariosRiesgoPhishing (
     ID INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Token VARCHAR(255) NOT NULL UNIQUE,

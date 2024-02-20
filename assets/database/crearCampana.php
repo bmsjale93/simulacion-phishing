@@ -122,7 +122,6 @@ function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana
         }
 
         if ($tipoPlantilla === 'personalizada') {
-            // Asumiendo que los datos personalizados se recogen de alguna manera, por ejemplo, desde $_POST o una función
             $datosPersonalizados = obtenerDatosPersonalizados();
 
             // Verificación de los datos personalizados

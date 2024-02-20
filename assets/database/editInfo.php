@@ -6,7 +6,6 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idUsuario = filter_input(INPUT_POST, 'idUsuario', FILTER_SANITIZE_NUMBER_INT);
 
-    // Sanitizar el resto de los campos
     $nombre = $conn->real_escape_string($_POST['nombre']);
     $direccion = $conn->real_escape_string($_POST['direccion']);
     $ciudad = $conn->real_escape_string($_POST['ciudad']);
@@ -19,17 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    // Sentencia SQL para actualizar la información del usuario
     $sql = "UPDATE Usuarios SET Nombre=?, Direccion=?, Ciudad=?, Pais=?, CodigoPostal=?, Telefono=? WHERE ID=?";
 
-    // Preparar la sentencia
     if ($stmt = $conn->prepare($sql)) {
-        // Vincular los parámetros
         $stmt->bind_param("ssssssi", $nombre, $direccion, $ciudad, $pais, $codigoPostal, $telefono, $idUsuario);
 
-        // Ejecutar la sentencia
         if ($stmt->execute()) {
-            // Verificar si se actualizaron filas
             if ($stmt->affected_rows > 0) {
                 echo json_encode(['success' => true, 'message' => 'Información actualizada con éxito.']);
             } else {

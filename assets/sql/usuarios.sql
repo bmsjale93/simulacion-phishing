@@ -1,9 +1,4 @@
-/*
-Esta tabla almacena información sobre los usuarios que pueden ser administradores (clientes) 
-que crean y envían campañas de phishing,
-o empleados que son los destinatarios de los correos de phishing.
- */
-
+-- Creación de la tabla Usuarios
 CREATE TABLE Usuarios (
     ID INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,

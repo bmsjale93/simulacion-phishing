@@ -1,18 +1,18 @@
 $(document).ready(function () {
   $("#editarInfoForm").on("submit", function (e) {
-    e.preventDefault(); // Prevenir el comportamiento de envío por defecto
+    e.preventDefault();
 
-    var formData = $(this).serialize(); // Serializar los datos del formulario
+    var formData = $(this).serialize();
 
     $.ajax({
       type: "POST",
-      url: "/simulacion-phishing/assets/database/editInfo.php", // URL del script PHP
-      data: formData, // Datos del formulario serializados
-      dataType: "json", // Tipo de datos esperados de la respuesta
+      url: "/simulacion-phishing/assets/database/editInfo.php",
+      data: formData,
+      dataType: "json",
       success: function (response) {
         if (response.success) {
-          alert(response.message); // Mostrar mensaje de éxito
-          $("#editarInfoModal").modal("hide"); // Ocultar modal
+          alert(response.message);
+          $("#editarInfoModal").modal("hide");
 
           // Actualizar la información del usuario en la página
           $("#nombreUsuario").text("Nombre: " + $("#nombre").val());

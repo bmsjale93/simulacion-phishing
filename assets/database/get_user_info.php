@@ -1,5 +1,4 @@
 <?php
-// Obtener la información del usuario
 $sql = "SELECT * FROM Usuarios WHERE ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userID);

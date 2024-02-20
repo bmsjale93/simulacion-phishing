@@ -12,7 +12,6 @@ function obtenerPlantillasCorreo($conn)
     $sql = "SELECT IDPlantilla, Nombre, Asunto, Cuerpo, LogoURL FROM PlantillasCorreo";
     $resultado = mysqli_query($conn, $sql);
 
-    // Verificar si la consulta fue exitosa
     if ($resultado) {
       $plantillas = [];
 

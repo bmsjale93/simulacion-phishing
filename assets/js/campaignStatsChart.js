@@ -1,4 +1,3 @@
-// campaignStatsChart.js
 function drawCampaignStatsChart(totalEnvios, entregados, clicks) {
   var ctx = document.getElementById("campaignStatsChart").getContext("2d");
   var campaignStatsChart = new Chart(ctx, {

@@ -1,5 +1,4 @@
 <?php
-    session_start();
     require_once 'config.php';
 
     $userID = $_SESSION['userID'] ?? null; 

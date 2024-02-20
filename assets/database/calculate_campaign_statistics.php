@@ -1,5 +1,4 @@
 <?php
-// Asumiendo que $userID ya está definido y contiene el ID del usuario en sesión
 $estadisticasSql = "SELECT 
     COUNT(*) AS TotalEnvios, 
     SUM(CASE WHEN Estado = 'entregado' THEN 1 ELSE 0 END) AS Entregados,

@@ -14,7 +14,6 @@
             <label for="nombre">Nombre</label>
             <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($userInfo['Nombre']); ?>">
           </div>
-          <!-- Email no editable -->
           <div class="form-group">
             <label for="direccion">Dirección</label>
             <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo htmlspecialchars($userInfo['Direccion']); ?>">
