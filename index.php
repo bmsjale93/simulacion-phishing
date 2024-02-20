@@ -115,11 +115,11 @@ session_start();
 
         <div class="hero-slider swiper">
             <div class="swiper-wrapper">
-                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/1.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/2.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/3.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/4.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/5.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/fondos-phishing-1.png');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/fondos-phishing-2.png');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/fondos-phishing-3.png');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/fondos-phishing-4.png');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/img/hero-carousel/fondos-phishing-5.png');"></div>
             </div>
         </div>
 

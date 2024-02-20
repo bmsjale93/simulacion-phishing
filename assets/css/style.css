@@ -981,6 +981,7 @@ section {
 #contact .contact-info {
   margin-bottom: 20px;
   text-align: center;
+  padding: 20px !important;
 }
 
 #contact .contact-info i {

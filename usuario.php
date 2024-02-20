@@ -38,7 +38,7 @@ require 'assets/database/calculate_campaign_statistics.php';
               <a class="nav-link" href="index.php">Inicio</a>
             </li>
             <li class="nav-item active">
-              <a class="nav-link" href="ofertas_trabajo.php">Ofertas de Trabajo<span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="phishing.html">Visualizar Simulación<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="assets/database/logout.php">Cerrar Sesión</a>
