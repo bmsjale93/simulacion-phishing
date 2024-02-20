@@ -67,7 +67,7 @@ session_start();
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                    <li><a class="nav-link" href="ofertas_trabajo.php">Ejemplos de Simulaciones</a></li>
+                    <li><a class="nav-link" href="phishing.html">Visualizar Simulación</a></li>
                     <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                     <?php if (isset($_SESSION['userID'])) : ?>
                         <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -85,7 +85,6 @@ session_start();
                 <nav id="navbar-mobile" class="navbar-mobile">
                     <ul>
                         <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                        <li><a class="nav-link" href="ofertas_trabajo.php">Ejemplos de Simulaciones</a></li>
                         <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                         <?php if (isset($_SESSION['userID'])) : ?>
                             <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -109,7 +108,7 @@ session_start();
         <div class="hero-content">
             <h2>Bienvenidos a<br>4 <span>Phish</span></h2>
             <div>
-                <a href="ofertas_trabajo.php" class="btn-get-started">Ejemplos de Simulaciones</a>
+                <a href="phishing.html" class="btn-get-started">Simulación de Phishing</a>
                 <a href="contacto.php" class="btn-projects">Contáctanos Ahora</a>
             </div>
         </div>
@@ -134,24 +133,21 @@ session_start();
             <div class="container" data-aos="fade-up">
                 <div class="row">
                     <div class="col-lg-6 about-img">
-                        <img src="assets/img/about-img.jpg" alt="">
+                        <img src="assets/img/phishing.png" alt="">
                     </div>
-
                     <div class="col-lg-6 content">
-                        <h2>¿Estás buscando trabajo?</h2>
-                        <h3>En WorkNow podrás aplicar a los últimos empleos subidos por las empresas asociadas
-                            a nuestra plataforma.
+                        <h2>¿Quieres aprender sobre el Phishing?</h2>
+                        <h3>En 4 Phish, te ofrecemos una plataforma interactiva para simular y comprender las campañas de phishing de forma segura.
+                            Aprende cómo protegerte contra las amenazas en línea con nuestras herramientas educativas.
                         </h3>
-
                         <ul>
-                            <li><i class="fa-solid fa-check"></i> Categorizados por Sector.</li>
-                            <li><i class="fa-solid fa-check"></i> Revisa en Vivo tus Ofertas.</li>
-                            <li><i class="fa-solid fa-check"></i> ¡Empieza a trabajar!</li>
+                            <li><i class="fa-solid fa-check"></i> Simulaciones basadas en escenarios reales.</li>
+                            <li><i class="fa-solid fa-check"></i> Herramientas para identificar y evitar el phishing.</li>
+                            <li><i class="fa-solid fa-check"></i> Mejora tus conocimientos y conviértete en un defensor de la seguridad en línea.</li>
                         </ul>
-
                     </div>
-                </div>
 
+                </div>
             </div>
         </section>
         <!-- End About Section -->
@@ -160,17 +156,18 @@ session_start();
         <section id="services">
             <div class="container" data-aos="fade-up">
                 <div class="section-header">
-                    <h2>Servicios</h2>
-                    <p>¡No pierdas más tiempo y empieza a aplicar para tu puesto de trabajo ideal!
+                    <h2>Educación y Simulación</h2>
+                    <p>¡Eleva tu conciencia sobre seguridad y aprende a defenderte contra el phishing con nuestras simulaciones interactivas!
                     </p>
                 </div>
+
 
                 <div class="row gy-4">
 
                     <div class="col-lg-4 col-md-6">
                         <div class="box">
                             <div class="icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                            <h4 class="title"><a href="ofertas_trabajo.php">Explora Ofertas</a></h4>
+                            <h4 class="title"><a href="phishing.html">Ver una Simulación</a></h4>
                             <p class="description">Navega a través de las distintas ofertas de trabajo disponibles.</p>
                         </div>
                     </div>
@@ -179,7 +176,7 @@ session_start();
                         <div class="box">
                             <div class="icon"><i class="fa-solid fa-arrow-right-to-bracket"></i></div>
                             <h4 class="title login-trigger"><a href="loginModal">Inicia</br>Sesión</a></h4>
-                            <p class="description">Accede a tu cuenta para administrar tus ofertas de empleo, así como tu CV.</p>
+                            <p class="description">Accede a tu cuenta para crear simulaciones de Campañas de Phishing</p>
                         </div>
                     </div>
 
@@ -187,7 +184,7 @@ session_start();
                         <div class="box">
                             <div class="icon"><i class="fa-solid fa-key"></i></div>
                             <h4 class="title register-trigger"><a href="registerModal">Regístrate</br>Ahora</a></h4>
-                            <p class="description">Crea una cuenta para poder aplicar a ofertas de trabajo y subir tu CV.</p>
+                            <p class="description">¡Crea una cuenta para poder crear simulaciones ahora!</p>
                         </div>
                     </div>
 
@@ -200,9 +197,10 @@ session_start();
         <section id="clients">
             <div class="container" data-aos="fade-up">
                 <div class="section-header">
-                    <h2>Nuestros Clientes</h2>
-                    <p>Descubre todas las empresas que trabajan con nosotros y descubre el trabajo ideal que estabas buscando.</p>
+                    <h2>Nuestros Colaboradores</h2>
+                    <p>Conoce a las organizaciones y educadores que se unen a nosotros en la misión de promover la conciencia sobre la seguridad cibernética y el phishing.</p>
                 </div>
+
 
                 <div class="clients-slider swiper" data-aos="fade-up" data-aos-delay="100">
                     <div class="swiper-wrapper align-items-center">
@@ -228,7 +226,7 @@ session_start();
                     <h2>Nuestro Equipo</h2>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-6 col-md-6">
                         <div class="member">
                             <div class="pic"><img src="assets/img/alex-team.png" alt=""></div>
                             <div class="details">
@@ -245,24 +243,7 @@ session_start();
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6">
-                        <div class="member">
-                            <div class="pic"><img src="assets/img/alzaro-team.png" alt=""></div>
-                            <div class="details">
-                                <h4>Álzaro Álvarez</h4>
-                                <span>Desarrollador Web</span>
-                                <p>Como dijo un Reggetonero: "Vamo' a frontear"</p>
-                                <div class="social">
-                                    <a href=""><i class="fa-brands fa-twitter"></i></a>
-                                    <a href=""><i class="fa-brands fa-facebook"></i></a>
-                                    <a href=""><i class="fa-brands fa-instagram"></i></a>
-                                    <a href=""><i class="fa-brands fa-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-6 col-md-6">
                         <div class="member">
                             <div class="pic"><img src="assets/img/Café team.png" alt=""></div>
                             <div class="details">
@@ -283,88 +264,90 @@ session_start();
         </section><!-- End Team Section -->
 
 
-        <!-- ======= Testimonials Section ======= -->
+        <!-- Testimonials Section -->
         <section id="testimonials">
             <div class="container" data-aos="fade-up">
                 <div class="section-header">
-                    <h2>Nuestros Clientes Hablan por Nosotros</h2>
-                    <p>En WorkNow nos enorgullecemos de conectar talentos con oportunidades. Nada nos satisface más que ver cómo nuestros usuarios alcanzan sus metas profesionales. Aquí te presentamos algunos testimonios de clientes que han encontrado el éxito a través de nuestra plataforma. ¡Sus historias podrían ser la inspiración que necesitas para dar el siguiente paso en tu carrera!</p>
+                    <h2>Experiencias de Aprendizaje</h2>
+                    <p>Escucha lo que dicen los participantes de nuestras simulaciones y cómo han mejorado su capacidad para identificar y evitar ataques de phishing.</p>
                 </div>
 
                 <div class="testimonials-slider swiper">
                     <div class="swiper-wrapper">
-
+                        <!-- Testimonial Item 1 -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <p>
                                     <img src="assets/img/quote-sign-left.png" class="quote-sign-left" alt="">
-                                    Descubrí Work Now cuando estaba buscando una oportunidad de crecimiento profesional. En solo unas semanas, encontré un proyecto que se ajustaba perfectamente a mis habilidades y expectativas.
+                                    "Antes pensaba que podía detectar fácilmente un intento de phishing. Tras participar en 4 Phish, me di cuenta de lo sofisticados que pueden ser estos ataques. Ahora estoy mucho mejor preparado."
                                     <img src="assets/img/quote-sign-right.png" class="quote-sign-right" alt="">
                                 </p>
                                 <img src="assets/img/testimonial-1.jpg" class="testimonial-img" alt="">
-                                <h3>Pedro Pascal</h3>
-                                <h4>Diseñador Gráfico</h4>
+                                <h3>Jose Delgado</h3>
+                                <h4>CEO StartUp</h4>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
+                        <!-- Testimonial Item 2 -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <p>
                                     <img src="assets/img/quote-sign-left.png" class="quote-sign-left" alt="">
-                                    Estaba un poco escéptico sobre los portales de empleo, pero WorkNow cambió mi perspectiva. Su interfaz intuitiva y las ofertas de trabajo relevantes me ayudaron a encontrar mi empleo actual en una empresa líder en tecnología.
+                                    "Las herramientas y técnicas aprendidas en 4 Phish me han ayudado a proteger a mi familia y amigos. Compartir este conocimiento ha sido increíblemente gratificante."
                                     <img src="assets/img/quote-sign-right.png" class="quote-sign-right" alt="">
                                 </p>
                                 <img src="assets/img/testimonial-2.jpg" class="testimonial-img" alt="">
-                                <h3>Xin Zao</h3>
-                                <h4>Ingeniera de Software</h4>
+                                <h3>Xin Zhao</h3>
+                                <h4>Profesor de Tecnología</h4>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
+                        <!-- Testimonial Item 3 -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <p>
                                     <img src="assets/img/quote-sign-left.png" class="quote-sign-left" alt="">
-                                    Como gerente de marketing, siempre busco los mejores talentos para mi equipo. WorkNow ha sido una herramienta invaluable para encontrar candidatos calificados y motivados.
+                                    "Implementamos las simulaciones de 4 Phish en nuestra organización, y el cambio en la cultura de seguridad ha sido notable. Nuestros equipos están más alerta y conscientes de las amenazas de seguridad."
                                     <img src="assets/img/quote-sign-right.png" class="quote-sign-right" alt="">
                                 </p>
                                 <img src="assets/img/testimonial-3.jpg" class="testimonial-img" alt="">
-                                <h3>Sofía Rodríguez</h3>
-                                <h4>Gerente de Marketing</h4>
+                                <h3>Sofía Castro</h3>
+                                <h4>Directora de Seguridad Informática</h4>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
+                        <!-- Testimonial Item 4 -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <p>
                                     <img src="assets/img/quote-sign-left.png" class="quote-sign-left" alt="">
-                                    Trabajar de manera independiente puede ser desafiante, especialmente al buscar clientes. Desde que me uní a WorkNow, he tenido un flujo constante de proyectos interesantes.
+                                    "Participar en 4 Phish me abrió los ojos a las numerosas formas en que los ciberdelincuentes intentan engañarnos. Ahora, estoy más atento a los posibles riesgos en línea."
                                     <img src="assets/img/quote-sign-right.png" class="quote-sign-right" alt="">
                                 </p>
                                 <img src="assets/img/testimonial-4.jpg" class="testimonial-img" alt="">
-                                <h3>Jorge Alonso</h3>
-                                <h4>Freelancer en Desarrollo Web</h4>
+                                <h3>José Martínez</h3>
+                                <h4>Consultor de Seguridad</h4>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
+                        <!-- Testimonial Item 5 -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <p>
                                     <img src="assets/img/quote-sign-left.png" class="quote-sign-left" alt="">
-                                    Me enfrenté al desafío de encontrar mi primer empleo. WorkNow no solo me ayudó a encontrar oportunidades adecuadas, sino que también ofrecía recursos para mejorar mi CV.
+                                    "4 Phish me enseñó a mirar más allá de los correos electrónicos aparentemente inofensivos y a cuestionar la autenticidad de los enlaces y las solicitudes de información personal."
                                     <img src="assets/img/quote-sign-right.png" class="quote-sign-right" alt="">
                                 </p>
                                 <img src="assets/img/testimonial-5.jpg" class="testimonial-img" alt="">
-                                <h3>Daddy Yankee 4ever</h3>
-                                <h4>Recién Graduado</h4>
+                                <h3>Henry Lopez</h3>
+                                <h4>Analista de Seguridad</h4>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
                     </div>
                     <div class="swiper-pagination"></div>
                 </div>
-
             </div>
         </section><!-- End Testimonials Section -->
-
     </main><!-- End #main -->
 
     <!-- Footer -->

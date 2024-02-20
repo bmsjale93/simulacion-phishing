@@ -66,7 +66,7 @@ session_start();
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                    <li><a class="nav-link" href="ofertas_trabajo.php">Ofertas de Trabajo</a></li>
+                    <li><a class="nav-link" href="phishing.html">Visualizar Simulación</a></li>
                     <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                     <?php if (isset($_SESSION['userID'])) : ?>
                         <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -84,7 +84,7 @@ session_start();
                 <nav id="navbar-mobile" class="navbar-mobile">
                     <ul>
                         <li><a class="nav-link active" href="index.php">Inicio</a></li>
-                        <li><a class="nav-link" href="ofertas_trabajo.php">Ofertas de Trabajo</a></li>
+                        <li><a class="nav-link" href="phishing.html">Visualizar Simulación</a></li>
                         <li><a class="nav-link" href="contacto.php">Contacto</a></li>
                         <?php if (isset($_SESSION['userID'])) : ?>
                             <!-- Si el usuario ha iniciado sesión, mostrar su nombre y la opción de cerrar sesión -->
@@ -141,7 +141,7 @@ session_start();
                     <div class="contact-email">
                         <i class="bi bi-envelope"></i>
                         <h3>Email</h3>
-                        <p><a href="mailto:info@example.com">contacto@trabajoempleo.com</a></p>
+                        <p><a href="mailto:info@example.com">contacto@4phish.com</a></p>
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@ session_start();
     <!-- Footer -->
     <footer class="py-4 bg-dark text-white-50">
         <div class="container text-center">
-            <small>Portal de Búsqueda de Trabajo © 2024 | Desarrollado por Alejandro Delgado & Álzaro Alvarez |</small>
+            <small>Portal para Simulación de Phishing © 2024 | Desarrollado por Alejandro Delgado |</small>
         </div>
     </footer>
 
