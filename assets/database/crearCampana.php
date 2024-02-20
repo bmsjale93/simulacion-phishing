@@ -51,12 +51,14 @@ function handlePostRequest($conn)
     // Manejo de la subida de la imagen de logo
     $imagenLogoUrl = '';
     if (isset($_FILES['logoImagen']) && $_FILES['logoImagen']['error'] == UPLOAD_ERR_OK) {
-        $directorioSubidas = '/simulacion-phishing/assets/img/empresas';
+        $directorioSubidas = '/Applications/MAMP/htdocs/simulacion-phishing/assets/img/empresas/';
         $nombreArchivo = basename($_FILES['logoImagen']['name']);
         $rutaArchivoSubido = $directorioSubidas . $nombreArchivo;
 
         if (move_uploaded_file($_FILES['logoImagen']['tmp_name'], $rutaArchivoSubido)) {
-            $imagenLogoUrl = '/simulacion-phishing/assets/img/empresas/' . $nombreArchivo;
+            $baseURL = 'http://localhost/simulacion-phishing';
+            $directorioWeb = '/assets/img/empresas/';
+            $imagenLogoUrl = $baseURL . $directorioWeb . $nombreArchivo;
         }
     }
 
@@ -131,7 +133,7 @@ function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana
         }
 
         // Ajuste en la llamada a enviarCorreo con parámetros adicionales
-        $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados);
+        $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados,$idCampana, $idEnvio);
         $estadoEnvio = $envioExitoso ? 'entregado' : 'fallido';
 
         insertarDetalleEnvio($conn, $idCampana, $correo, $estadoEnvio, $idEnvio);
@@ -156,8 +158,11 @@ function obtenerDetallesPlantilla($conn, $idPlantilla)
 }
 
 
-function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null)
+function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null, $idCampana, $idEnvio)
 {
+    $token = md5($emailDestinatario . time() . rand());
+    $urlSeguimiento = "http://localhost/simulacion-phishing/assets/database/registro_clics.php?token=$token&campana=$idCampana&envio=$idEnvio&destinatario=" . urlencode($emailDestinatario);
+
     $mail = new PHPMailer(true);
     try {
         // Configuración inicial de PHPMailer
@@ -173,7 +178,6 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
         $mail->addAddress($emailDestinatario);
         $mail->isHTML(true);
 
-        // Construcción dinámica del cuerpo del correo
         $asunto = '';
         $cuerpo = '';
 
@@ -181,27 +185,18 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
             $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
             if ($detallesPlantilla !== null) {
                 $asunto = $detallesPlantilla['Asunto'];
-                $cuerpo = $detallesPlantilla['Cuerpo'];
-                if (!empty($detallesPlantilla['LogoURL'])) {
-                    $cuerpo .= "<br><div style='text-align: center;'><img src='{$detallesPlantilla['LogoURL']}' alt='Logo' style='max-width: 100px;'></div>";
-                }
+                $cuerpoOriginal = $detallesPlantilla['Cuerpo'];
+                $cuerpo = $cuerpoOriginal . "<br><a href='$urlSeguimiento'>Haz clic aquí para más información.</a>";
             } else {
                 error_log("Detalles de la plantilla no encontrados para el ID: $idPlantilla");
                 return false;
             }
         } elseif ($tipoPlantilla === 'personalizada' && $datosPersonalizados !== null) {
-            // Extraer correctamente los datos de $datosPersonalizados
-            $asunto = $datosPersonalizados['asunto'] ?? '';
-            $cuerpo = $datosPersonalizados['cuerpo'] ?? '';
-
-            // Validación de datos personalizados
-            if (empty($asunto) || empty($cuerpo)) {
-                error_log("Datos personalizados incompletos para el destinatario $emailDestinatario");
-                return false;
-            }
+            $asunto = $datosPersonalizados['asunto'];
+            $cuerpoPersonalizado = $datosPersonalizados['cuerpo'];
+            $cuerpo = $cuerpoPersonalizado . "<br><a href='$urlSeguimiento'>Haz clic aquí para más información.</a>";
         }
 
-        // Verificación del cuerpo y asunto del correo
         if (empty($cuerpo) || empty($asunto)) {
             error_log("El cuerpo o asunto del correo está vacío para el destinatario $emailDestinatario");
             return false;
@@ -217,6 +212,7 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
         return false;
     }
 }
+
 
 function insertarDestinatario($conn, $idCampana, $correo)
 {
@@ -290,7 +286,7 @@ function insertarEnvio($conn, $idCampana, $tipoEnvio = 'único')
     return $idEnvio;
 }
 
-function crearCuerpoCorreo($titulo, $contenido, $urlEngano, $imagenLogo = '')
+function crearCuerpoCorreo($titulo, $contenido, $urlEngano, $imagenLogoUrl)
 {
     $cuerpoCorreo = <<<HTML
 <!DOCTYPE html>
@@ -311,7 +307,7 @@ function crearCuerpoCorreo($titulo, $contenido, $urlEngano, $imagenLogo = '')
         <p>$contenido</p>
         <a href="$urlEngano" class="btn-engano">Haz clic aquí para verificar</a>
         <div class="logo">
-            <img src="$imagenLogo" alt="Logo" style="max-width: 100px;">
+            <img src="{$imagenLogoUrl}" alt="Logo" style="max-width: 100px;">
         </div>
     </div>
 </body>

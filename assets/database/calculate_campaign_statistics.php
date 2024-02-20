@@ -3,15 +3,15 @@
 $estadisticasSql = "SELECT 
     COUNT(*) AS TotalEnvios, 
     SUM(CASE WHEN Estado = 'entregado' THEN 1 ELSE 0 END) AS Entregados,
-    (SELECT COUNT(DISTINCT Clicks.IDClick) 
-     FROM Clicks 
-     JOIN Envíos ON Clicks.IDEnvío = Envíos.IDEnvío
-     JOIN Campañas ON Envíos.IDCampaña = Campañas.IDCampaña
+    (SELECT COUNT(DISTINCT UsuariosRiesgoPhishing.ID) 
+     FROM UsuariosRiesgoPhishing 
+     JOIN Campañas ON UsuariosRiesgoPhishing.IDCampaña = Campañas.IDCampaña
      WHERE Campañas.IDUsuario = ?) AS Clicks 
 FROM DetallesEnvíos 
 JOIN Envíos ON DetallesEnvíos.IDEnvío = Envíos.IDEnvío
 JOIN Campañas ON Envíos.IDCampaña = Campañas.IDCampaña
 WHERE Campañas.IDUsuario = ?";
+
 $stmt = $conn->prepare($estadisticasSql);
 if ($stmt === false) {
     die("Error preparando la consulta: " . $conn->error);

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concienciación sobre Phishing</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 50px;
+            background-color: #f5f5f5;
+        }
+        .contenido-principal {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            animation: fadeIn 1.5s ease-out;
+        }
+        .titulo-principal {
+            color: red;
+            font-size: 5rem;
+            text-align: center;
+            animation: popIn 1s ease-out;
+        }
+        h2 {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            animation: slideIn 1s ease-out;
+        }
+        .lista-phishing, .lista-estadisticas, .lista-pasos {
+            list-style: none;
+            padding: 0;
+        }
+        .lista-phishing li, .lista-estadisticas li, .lista-pasos li {
+            margin-bottom: 10px;
+            background: #efefef;
+            border-radius: 5px;
+            padding: 10px 15px;
+            animation: fadeIn 2s ease-out;
+        }
+        .descarga-pdf {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-descarga {
+            font-size: 1.2rem; /* Tamaño de fuente más grande */
+            background-color: red;
+            border-color: red;
+            color: white;
+            padding: 10px 20px; /* Ajusta el padding para hacer el botón más grande */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para transform y sombra */
+        }
+
+        .btn-descarga:hover, .btn-descarga:focus {
+            transform: scale(1.05); /* Efecto de "pop" al pasar el mouse o enfocar */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra más pronunciada para efecto de elevación */
+            color: white; /* Asegurar que el texto permanezca blanco al interactuar */
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="contenido-principal">
+        <h1 class="titulo-principal">¡Alerta de Phishing!</h1>
+        <p>Has caído en una campaña de phishing simulada. No te preocupes, esta vez ha sido solo una simulación. Es crucial aprender a reconocer y evitar estas amenazas.</p>
+        
+        <div class="row">
+            <div class="col-md-6 estadisticas">
+                <h2>Estadísticas Anuales de Phishing</h2>
+                <ul class="lista-estadisticas">
+                    <li>Más del 30% de los correos electrónicos de phishing son abiertos por los destinatarios.</li>
+                    <li>15% de las personas que abren un correo de phishing proceden a clicar en el enlace.</li>
+                    <li>Las pérdidas anuales por phishing se estiman en miles de millones a nivel global.</li>
+                </ul>
+            </div>
+
+            <div class="col-md-6 tipos-phishing">
+                <h2>Campañas de Phishing Comunes</h2>
+                <ul class="lista-phishing">
+                    <li><b>Phishing Bancario:</b> Intentos de obtener información financiera personal.</li>
+                    <li><b>Phishing de Soporte Técnico:</b> Falsas alertas de seguridad o problemas técnicos.</li>
+                    <li><b>Suplantación de Identidad Corporativa:</b> Correos que imitan comunicaciones oficiales de empresas.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pasos-post-phishing">
+            <h2>¿Qué Hacer si Caes en Phishing?</h2>
+            <ul class="lista-pasos">
+                <li>Cambia de inmediato todas tus contraseñas, especialmente si compartiste credenciales financieras o personales.</li>
+                <li>Informa a tu banco o institución financiera sobre el incidente si has proporcionado información financiera.</li>
+                <li>Realiza un escaneo de malware en tu dispositivo para asegurarte de que no se haya instalado software malicioso.</li>
+                <li>Alerta a tu departamento de TI si el incidente ocurrió con recursos de la empresa.</li>
+                <li>Considera la posibilidad de activar la verificación en dos pasos en tus cuentas para añadir una capa extra de seguridad.</li>
+                <li>Mantente informado sobre las últimas tácticas de phishing para poder reconocer futuros intentos.</li>
+            </ul>
+        </div>
+        <div class="descarga-pdf">
+            <a href="assets/pdf/concienciacion.pdf" class="btn btn-descarga" download>Descargar Guía de Prevención de Phishing</a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
