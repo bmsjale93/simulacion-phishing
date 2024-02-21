@@ -7,7 +7,6 @@ $(document).ready(function () {
   $("#tipoCampana").change(function () {
     var tipo = $(this).val();
     mostrarCamposBasadosEnTipo(tipo);
-    // Esto asegura que la lógica de visualización de campos de correo se reevalúe con cada cambio
     mostrarCamposIngresoCorreos($("#metodoIngresoCorreos").val());
   });
 
@@ -17,7 +16,7 @@ $(document).ready(function () {
     mostrarCamposIngresoCorreos(metodo);
   });
 
-  // Función mejorada para mostrar/ocultar campos basada en el método de ingreso de correos
+  // Función para mostrar/ocultar campos basada en el método de ingreso de correos
   function mostrarCamposIngresoCorreos(metodo) {
     if (metodo === "manual") {
       $("#campoCorreosManual")
@@ -34,14 +33,13 @@ $(document).ready(function () {
     }
   }
 
-  // Función mejorada para mostrar/ocultar y requerir campos basada en el tipo de campaña
+  // Función para mostrar/ocultar y requerir campos basada en el tipo de campaña
   function mostrarCamposBasadosEnTipo(tipo) {
     $("#tipoPlantilla").val(tipo);
     if (tipo === "personalizada") {
       $("#campanaPersonalizada").show();
       $("#campanaMaquetado").hide();
       $("#IDPlantilla").val("").removeAttr("required");
-      // Asegurarse de que los campos personalizados sean requeridos
       $(
         "#nombreCampana, #descripcionCampana, #asuntoCorreo, #cuerpoCorreo"
       ).attr("required", true);
@@ -49,7 +47,6 @@ $(document).ready(function () {
       $("#campanaMaquetado").show();
       $("#campanaPersonalizada").hide();
       $("#IDPlantilla").attr("required", true);
-      // Eliminar requisito de campos no utilizados en campañas predefinidas
       $("#asuntoCorreo, #cuerpoCorreo").removeAttr("required");
     }
   }
@@ -70,7 +67,7 @@ $(document).ready(function () {
           $("#cuerpoCorreo").val(data.Cuerpo);
           $("#tipoPlantilla").val("predeterminada");
           $("#IDPlantilla").val(plantillaId);
-          mostrarCamposBasadosEnTipo("personalizada"); // Reevaluar la visualización de campos
+          mostrarCamposBasadosEnTipo("personalizada");
         },
         error: function (xhr, status, error) {
           alert("Ocurrió un error al cargar los detalles de la plantilla.");
@@ -87,20 +84,19 @@ $("#formCrearCampana").on("submit", function (e) {
       url: "/simulacion-phishing/assets/database/crearCampana.php",
       type: "POST",
       data: formData,
-      contentType: false, // Indica a jQuery que no establezca el tipo de contenido
-      processData: false, // Evita que jQuery procese los datos
-      dataType: "json", // Asegura que la respuesta se trate como JSON
+      contentType: false,
+      processData: false,
+      dataType: "json",
       success: function (response) {
         if (response.success) {
           alert(response.success + " ID de campaña: " + response.idCampana);
-          // Manejo opcional de mensajes adicionales
           if (response.mensajesDeProceso) {
             response.mensajesDeProceso.forEach(function (mensaje) {
               console.log(mensaje);
             });
           }
           $("#crearCampanaModal").modal("hide");
-          location.reload(); // O actualizar la vista adecuadamente sin recargar
+          location.reload(); 
         } else if (response.error) {
           alert("Error: " + response.error);
         }
@@ -115,9 +111,9 @@ $("#formCrearCampana").on("submit", function (e) {
 });
 
 
-  // Función mejorada para validar campos obligatorios, incluyendo campos dinámicos
+  // Función para validar campos obligatorios, incluyendo campos dinámicos
   function validarCamposObligatorios() {
-    $(".error").remove(); // Limpiar mensajes de error previos
+    $(".error").remove();
     let esValido = true;
     $("form#formCrearCampana :input[required]:visible").each(function () {
       if (!this.value.trim()) {

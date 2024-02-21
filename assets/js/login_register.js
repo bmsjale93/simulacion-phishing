@@ -156,7 +156,7 @@ function initializeStepNavigation() {
   $("#registerFormModal").find("button").click(function (e) {
     navigateSteps(this, e);
   });
-  goToStep(1); // Inicializar en el paso 1
+  goToStep(1);
 }
 
 function navigateSteps(button, event) {

@@ -48,8 +48,7 @@ function handlePostRequest($conn)
         }
     }
 
-    // Ajuste para la validación de correosUnicos y archivoCSV
-    $metodoIngresoCorreos = $_POST['metodoIngresoCorreos'] ?? ''; // Verifica si se especificó un método de ingreso de correos
+    $metodoIngresoCorreos = $_POST['metodoIngresoCorreos'] ?? '';
     $correosUnicosValidos = !empty($_POST['correosUnicos']);
     $archivoCSVValido = $metodoIngresoCorreos === 'csv' && isset($_FILES['archivoCSV']) && $_FILES['archivoCSV']['error'] === UPLOAD_ERR_OK;
 
@@ -144,7 +143,7 @@ function procesarCorreosUnicos($conn, $idCampana, $correosArray, $nombreCampana,
     foreach ($correosArray as $correo) {
         $correo = trim($correo);
         if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-            continue; // Omitir correos inválidos
+            continue;
         }
 
         if ($tipoPlantilla === 'personalizada') {
@@ -157,7 +156,6 @@ function procesarCorreosUnicos($conn, $idCampana, $correosArray, $nombreCampana,
             }
         }
 
-        // Ajuste en la llamada a enviarCorreo con parámetros adicionales
         $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados, $idCampana, $idEnvio);
         $estadoEnvio = $envioExitoso ? 'entregado' : 'fallido';
 
@@ -200,7 +198,7 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
         $mail->SMTPSecure = $smtpSecure;
         $mail->Port = $smtpPort;
         $mail->CharSet = $smtpCharset;
-        $mail->setFrom($smtpFromEmail, $nombreCampana); // Asegúrate de asignar $nombreCampana antes
+        $mail->setFrom($smtpFromEmail, $nombreCampana);
         $mail->addAddress($emailDestinatario);
         $mail->isHTML(true);
 
