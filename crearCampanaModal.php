@@ -83,15 +83,34 @@ function obtenerPlantillasCorreo($conn)
               </select>
             </div>
           </div>
+          <!-- Selector para el método de ingreso de correos -->
           <div class="form-group">
-            <label for="correosUnicos">Correos (separados por comas):</label>
-            <input type="text" class="form-control" id="correosUnicos" name="correosUnicos">
+            <label for="metodoIngresoCorreos">Método de Ingreso de Correos:</label>
+            <select class="form-control" id="metodoIngresoCorreos" name="metodoIngresoCorreos">
+              <option value="manual">Manual</option>
+              <option value="csv">CSV</option>
+            </select>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-primary">Guardar Campaña</button>
-        </div>
+
+          <!-- Campo para ingreso manual de correos -->
+          <div id="campoCorreosManual" style="display:none;">
+            <div class="form-group">
+              <label for="correosUnicos">Correos (separados por comas):</label>
+              <input type="text" class="form-control" id="correosUnicos" name="correosUnicos">
+            </div>
+          </div>
+
+          <!-- Campo para la carga de archivo CSV -->
+          <div id="campoArchivoCSV" style="display:none;">
+            <div class="form-group">
+              <label for="archivoCSV">Subir archivo CSV con correos:</label>
+              <input type="file" class="form-control-file" id="archivoCSV" name="archivoCSV" accept=".csv">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar Campaña</button>
+          </div>
       </form>
     </div>
   </div>

@@ -40,12 +40,22 @@ function handleGetRequest($conn)
 
 function handlePostRequest($conn)
 {
-    $camposRequeridos = ['nombreCampana', 'descripcionCampana', 'tipoPlantilla', 'correosUnicos'];
+    $camposRequeridos = ['nombreCampana', 'descripcionCampana', 'tipoPlantilla'];
     foreach ($camposRequeridos as $campo) {
         if (empty($_POST[$campo])) {
             echo json_encode(['error' => "El campo $campo es obligatorio"]);
             exit;
         }
+    }
+
+    // Ajuste para la validación de correosUnicos y archivoCSV
+    $metodoIngresoCorreos = $_POST['metodoIngresoCorreos'] ?? ''; // Verifica si se especificó un método de ingreso de correos
+    $correosUnicosValidos = !empty($_POST['correosUnicos']);
+    $archivoCSVValido = $metodoIngresoCorreos === 'csv' && isset($_FILES['archivoCSV']) && $_FILES['archivoCSV']['error'] === UPLOAD_ERR_OK;
+
+    if (!$correosUnicosValidos && !$archivoCSVValido) {
+        echo json_encode(['error' => "Es obligatorio proporcionar correos electrónicos ya sea a través del campo 'correosUnicos' o mediante la carga de un archivo CSV."]);
+        exit;
     }
 
     // Manejo de la subida de la imagen de logo
@@ -84,7 +94,24 @@ function handlePostRequest($conn)
         $idCampana = insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana, $idPlantilla, $idPlantillaPersonalizada);
         $idEnvio = insertarEnvio($conn, $idCampana, 'único');
         $datosPersonalizados = null;
-        procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla, $datosPersonalizados);
+        $correosUnicosArray = array();
+
+        if (!empty($_POST['correosUnicos'])) {
+            $correosUnicosArray = explode(',', htmlspecialchars($_POST['correosUnicos']));
+        }
+
+        // O si recibes un archivo CSV
+        if (isset($_FILES['archivoCSV']) && $_FILES['archivoCSV']['error'] == UPLOAD_ERR_OK) {
+            $rutaArchivoCSV = $_FILES['archivoCSV']['tmp_name'];
+            if (($handle = fopen($rutaArchivoCSV, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    $correosUnicosArray[] = $data[0];
+                }
+                fclose($handle);
+            }
+        }
+
+        procesarCorreosUnicos($conn, $idCampana, $correosUnicosArray, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla, $datosPersonalizados);
 
         $conn->commit();
         echo json_encode(['success' => 'Campaña creada con éxito', 'idCampana' => $idCampana]);
@@ -112,9 +139,8 @@ function insertarCampana($conn, $idUsuario, $nombreCampana, $descripcionCampana,
     return $idCampana;
 }
 
-function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null)
+function procesarCorreosUnicos($conn, $idCampana, $correosArray, $nombreCampana, $idEnvio, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null)
 {
-    $correosArray = explode(',', $correosUnicos);
     foreach ($correosArray as $correo) {
         $correo = trim($correo);
         if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
@@ -132,7 +158,7 @@ function procesarCorreosUnicos($conn, $idCampana, $correosUnicos, $nombreCampana
         }
 
         // Ajuste en la llamada a enviarCorreo con parámetros adicionales
-        $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados,$idCampana, $idEnvio);
+        $envioExitoso = enviarCorreo($conn, $correo, $nombreCampana, $tipoPlantilla, $idPlantilla, $datosPersonalizados, $idCampana, $idEnvio);
         $estadoEnvio = $envioExitoso ? 'entregado' : 'fallido';
 
         insertarDetalleEnvio($conn, $idCampana, $correo, $estadoEnvio, $idEnvio);
@@ -159,6 +185,7 @@ function obtenerDetallesPlantilla($conn, $idPlantilla)
 
 function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla, $idPlantilla = null, $datosPersonalizados = null, $idCampana, $idEnvio)
 {
+    global $smtpHost, $smtpAuth, $smtpUsername, $smtpPassword, $smtpSecure, $smtpPort, $smtpCharset, $smtpFromEmail;
     $token = md5($emailDestinatario . time() . rand());
     $urlSeguimiento = "http://localhost/simulacion-phishing/assets/database/registro_clics.php?token=$token&campana=$idCampana&envio=$idEnvio&destinatario=" . urlencode($emailDestinatario);
 
@@ -166,14 +193,14 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
     try {
         // Configuración inicial de PHPMailer
         $mail->isSMTP();
-        $mail->Host = 'smtp-relay.brevo.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'bmsjale@gmail.com';
-        $mail->Password = 'gMAVXYwhSH8Lv0j4';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->CharSet = 'UTF-8';
-        $mail->setFrom('bmsjale@gmail.com', $nombreCampana);
+        $mail->Host = $smtpHost;
+        $mail->SMTPAuth = $smtpAuth;
+        $mail->Username = $smtpUsername;
+        $mail->Password = $smtpPassword;
+        $mail->SMTPSecure = $smtpSecure;
+        $mail->Port = $smtpPort;
+        $mail->CharSet = $smtpCharset;
+        $mail->setFrom($smtpFromEmail, $nombreCampana); // Asegúrate de asignar $nombreCampana antes
         $mail->addAddress($emailDestinatario);
         $mail->isHTML(true);
 
