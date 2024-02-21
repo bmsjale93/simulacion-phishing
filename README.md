@@ -11,8 +11,7 @@ Básicamente, este proyecto es como un juego de rol donde nosotros somos los "ma
 - **Creación de Campañas**: Ponte en los zapatos de un ciberdelincuente (¡pero solo para fines educativos!) y lanza tus propias campañas de phishing.
 - **Análisis y Estadísticas**: Observa cómo reaccionan los usuarios y aprende sobre las técnicas más efectivas (para saber cómo protegerte, claro está).
 - **Identificación de Usuarios en Riesgo**: Averigua quiénes son los más susceptibles a estos ataques y piensa en formas de educarlos.
-- **Página de Phishing de Mentiritas**: Una página falsa para que veas cómo se las ingenian para robar información, sin el riesgo de caer en la trampa de verdad.
-- **Chismes y Contacto**: ¿Tienes alguna idea genial o necesitas ayuda? ¡Estoy aquí para eso!
+- **Página de Phishing**: Una página falsa que sirve de concienciación para el usuario y aporta documentos educativos para mejorar la educación en este ámbito.
 
 ## Instalación 🔧
 
