@@ -1,12 +1,13 @@
 <?php
 // Obtener detalles de envíos para todas las campañas del usuario
-$detallesEnviosSql = "SELECT DetallesEnvíos.EmailDestinatario, DetallesEnvíos.Estado, MAX(Clicks.FechaHoraClick) AS UltimoClick
+$detallesEnviosSql = "SELECT DetallesEnvíos.EmailDestinatario, DetallesEnvíos.Estado, MAX(UsuariosRiesgoPhishing.FechaHoraClick) AS UltimoClick
                       FROM DetallesEnvíos
-                      LEFT JOIN Clicks ON DetallesEnvíos.IDEnvío = Clicks.IDEnvío
+                      LEFT JOIN UsuariosRiesgoPhishing ON DetallesEnvíos.EmailDestinatario = UsuariosRiesgoPhishing.EmailDestinatario AND DetallesEnvíos.IDEnvío = UsuariosRiesgoPhishing.IDEnvío
                       JOIN Envíos ON DetallesEnvíos.IDEnvío = Envíos.IDEnvío
                       JOIN Campañas ON Envíos.IDCampaña = Campañas.IDCampaña
                       WHERE Campañas.IDUsuario = ?
                       GROUP BY DetallesEnvíos.EmailDestinatario, DetallesEnvíos.Estado";
+
 $stmt = $conn->prepare($detallesEnviosSql);
 if ($stmt === false) {
     die("Error preparando la consulta: " . $conn->error);

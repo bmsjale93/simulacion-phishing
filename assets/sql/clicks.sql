@@ -1,9 +1,0 @@
--- Creación de la tabla Clicks
-CREATE TABLE Clicks (
-    IDClick INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    IDEnvío INT(6) UNSIGNED,
-    IDDestinatario INT(6) UNSIGNED,
-    FechaHoraClick TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (IDEnvío) REFERENCES Envíos(IDEnvío) ON DELETE CASCADE,
-    FOREIGN KEY (IDDestinatario) REFERENCES DestinatariosCampaña(IDDestinatario) ON DELETE CASCADE
-);

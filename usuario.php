@@ -8,10 +8,10 @@ if (!isset($_SESSION['userID'])) {
 }
 
 $userID = $_SESSION['userID'];
-require 'assets/database/get_user_info.php';
-require 'assets/database/get_last_campaign_details.php';
-require 'assets/database/get_at_risk_users.php';
-require 'assets/database/calculate_campaign_statistics.php';
+require 'assets/database/usuarioInfo.php';
+require 'assets/database/detallesCampana.php';
+require 'assets/database/usuariosEnRiesgo.php';
+require 'assets/database/calcularStatsCampana.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
