@@ -186,7 +186,7 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
     global $smtpHost, $smtpAuth, $smtpUsername, $smtpPassword, $smtpSecure, $smtpPort, $smtpCharset, $smtpFromEmail;
     $token = md5($emailDestinatario . time() . rand());
     $urlSeguimiento = "http://localhost/simulacion-phishing/assets/database/registro_clics.php?token=$token&campana=$idCampana&envio=$idEnvio&destinatario=" . urlencode($emailDestinatario);
-
+    $imagenLogoUrl = "";
     $mail = new PHPMailer(true);
     try {
         // Configuración inicial de PHPMailer
@@ -209,16 +209,18 @@ function enviarCorreo($conn, $emailDestinatario, $nombreCampana, $tipoPlantilla,
             $detallesPlantilla = obtenerDetallesPlantilla($conn, $idPlantilla);
             if ($detallesPlantilla !== null) {
                 $asunto = $detallesPlantilla['Asunto'];
-                $cuerpoOriginal = $detallesPlantilla['Cuerpo'];
-                $cuerpo = $cuerpoOriginal . "<br><a href='$urlSeguimiento'>Haz clic aquí para más información.</a>";
+                $titulo = $detallesPlantilla['Nombre'];
+                $contenido = $detallesPlantilla['Cuerpo'];
+                $cuerpo = crearCuerpoCorreo($titulo, $contenido, $urlSeguimiento, $imagenLogoUrl);
             } else {
                 error_log("Detalles de la plantilla no encontrados para el ID: $idPlantilla");
                 return false;
             }
         } elseif ($tipoPlantilla === 'personalizada' && $datosPersonalizados !== null) {
             $asunto = $datosPersonalizados['asunto'];
-            $cuerpoPersonalizado = $datosPersonalizados['cuerpo'];
-            $cuerpo = $cuerpoPersonalizado . "<br><a href='$urlSeguimiento'>Haz clic aquí para más información.</a>";
+            $titulo = $datosPersonalizados['titulo'];
+            $contenido = $datosPersonalizados['cuerpo'];
+            $cuerpo = crearCuerpoCorreo($titulo, $contenido, $urlSeguimiento, $imagenLogoUrl);
         }
 
         if (empty($cuerpo) || empty($asunto)) {
@@ -317,21 +319,34 @@ function crearCuerpoCorreo($titulo, $contenido, $urlEngano, $imagenLogoUrl)
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$titulo</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 14px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; }
-        .btn-engano { display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-        .logo { text-align: center; margin-top: 30px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color: #333; }
+        .container { max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; }
+        .logo img { max-width: 150px; margin-bottom: 20px; }
+        .footer { margin-top: 30px; font-size: 14px; color: #666; }
+        p { line-height: 1.6; }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="{$imagenLogoUrl}" alt="Logo">
+        </div>
         <h2>$titulo</h2>
         <p>$contenido</p>
-        <a href="$urlEngano" class="btn-engano">Haz clic aquí para verificar</a>
-        <div class="logo">
-            <img src="{$imagenLogoUrl}" alt="Logo" style="max-width: 100px;">
+        <!-- Botón implementado con tabla para mayor compatibilidad -->
+        <table cellspacing="0" cellpadding="0" style="margin-top: 20px;">
+            <tr>
+                <td align="center" bgcolor="#004aad" style="border-radius: 5px; padding: 12px 25px;">
+                    <a href="$urlEngano" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block; text-align: center;">Verificar Ahora</a>
+                </td>
+            </tr>
+        </table>
+        <div class="footer">
+            <p>Si tienes alguna pregunta, no dudes en contactar a nuestro equipo de soporte.</p>
+            <p>Por favor, no respondas a este correo electrónico, ya que no podemos recibir mensajes en esta cuenta.</p>
         </div>
     </div>
 </body>
@@ -340,6 +355,8 @@ HTML;
 
     return $cuerpoCorreo;
 }
+
+
 
 function obtenerDatosPersonalizados()
 {
